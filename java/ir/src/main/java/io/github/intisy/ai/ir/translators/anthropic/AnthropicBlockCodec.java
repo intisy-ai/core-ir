@@ -6,6 +6,7 @@ import io.github.intisy.ai.ir.TextBlock;
 import io.github.intisy.ai.ir.ThinkingBlock;
 import io.github.intisy.ai.ir.ToolResultBlock;
 import io.github.intisy.ai.ir.ToolUseBlock;
+import io.github.intisy.ai.ir.UnknownBlock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,10 @@ final class AnthropicBlockCodec {
     static final String EXT_CONTENT_IS_STRING = "$contentIsString";
     static final String EXT_REDACTED = "$redacted";
     static final String EXT_REDACTED_DATA = "$redactedThinkingData";
+
+    /** Every {@code type} this codec has a typed {@link Block} model for; anything else decodes as {@link io.github.intisy.ai.ir.UnknownBlock}. */
+    private static final Set<String> KNOWN_BLOCK_TYPES = new HashSet<>(Arrays.asList(
+            "text", "image", "tool_use", "tool_result", "thinking", "redacted_thinking"));
 
     static void putExtension(Block block, String key, Object value) {
         if (block.extensions == null) block.extensions = new LinkedHashMap<>();
@@ -71,6 +76,15 @@ final class AnthropicBlockCodec {
     static Block decodeBlock(Map<String, Object> m) {
         if (m == null) return null;
         String type = AnthropicJsonUtil.asString(m.get("type"));
+        if (!KNOWN_BLOCK_TYPES.contains(type)) {
+            // A block type this codec has no typed model for (e.g. Anthropic's `document`, or any
+            // future addition) -- stash it verbatim rather than throw, so a translator ahead of a
+            // real upstream (not just a golden-vector test) never fails a whole request/response
+            // over ONE block it doesn't recognize (see UnknownBlock javadoc).
+            UnknownBlock u = new UnknownBlock();
+            u.raw = new LinkedHashMap<>(m);
+            return u;
+        }
         Set<String> consumed = new HashSet<>(Arrays.asList("type", "cache_control"));
         Block block;
         if ("text".equals(type)) {
@@ -104,6 +118,8 @@ final class AnthropicBlockCodec {
             consumed.add("data");
             block = t;
         } else {
+            // Unreachable: the KNOWN_BLOCK_TYPES guard above already routed every other type to
+            // UnknownBlock and returned. Kept as a safety net rather than removed outright.
             throw new IllegalArgumentException("unsupported Anthropic content block type: " + type);
         }
         decodeCacheControl(m, block);
@@ -160,6 +176,12 @@ final class AnthropicBlockCodec {
 
     static Map<String, Object> encodeBlock(Block block) {
         if (block == null) return null;
+        if (block instanceof UnknownBlock) {
+            // Return the stashed raw map verbatim -- bypass the shared cache_control/extensions
+            // appending below entirely, since `raw` already carries every field (including
+            // cache_control, if the original block had one) exactly as decoded.
+            return new LinkedHashMap<>(((UnknownBlock) block).raw);
+        }
         Map<String, Object> m = new LinkedHashMap<>();
         if (block instanceof TextBlock) {
             m.put("type", "text");
