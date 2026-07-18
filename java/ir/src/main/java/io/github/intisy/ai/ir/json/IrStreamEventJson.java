@@ -68,73 +68,70 @@ final class IrStreamEventJson {
         } else {
             throw new IllegalArgumentException("unsupported IrStreamEvent type: " + e.getClass());
         }
+        if (e.extensions != null) m.put("extensions", e.extensions);
         return m;
     }
 
+    @SuppressWarnings("unchecked")
     static IrStreamEvent fromMap(Map<String, Object> m) {
         if (m == null) return null;
         String event = JsonUtil.asString(m.get("event"));
+        IrStreamEvent ev;
         if (IrEventType.MESSAGE_START.equals(event)) {
-            MessageStartEvent ev = new MessageStartEvent();
-            ev.id = JsonUtil.asString(m.get("id"));
-            ev.model = JsonUtil.asString(m.get("model"));
-            ev.role = JsonUtil.asString(m.get("role"));
-            ev.usage = CommonJson.usageFromMap(m.get("usage"));
-            return ev;
+            MessageStartEvent e = new MessageStartEvent();
+            e.id = JsonUtil.asString(m.get("id"));
+            e.model = JsonUtil.asString(m.get("model"));
+            e.role = JsonUtil.asString(m.get("role"));
+            e.usage = CommonJson.usageFromMap(m.get("usage"));
+            ev = e;
+        } else if (IrEventType.CONTENT_BLOCK_START.equals(event)) {
+            ContentBlockStartEvent e = new ContentBlockStartEvent();
+            e.index = orZero(JsonUtil.asInt(m.get("index")));
+            e.blockKind = JsonUtil.asString(m.get("blockKind"));
+            e.toolUseId = JsonUtil.asString(m.get("toolUseId"));
+            e.toolName = JsonUtil.asString(m.get("toolName"));
+            ev = e;
+        } else if (IrEventType.TEXT_DELTA.equals(event)) {
+            TextDeltaEvent e = new TextDeltaEvent();
+            e.index = orZero(JsonUtil.asInt(m.get("index")));
+            e.text = JsonUtil.asString(m.get("text"));
+            ev = e;
+        } else if (IrEventType.THINKING_DELTA.equals(event)) {
+            ThinkingDeltaEvent e = new ThinkingDeltaEvent();
+            e.index = orZero(JsonUtil.asInt(m.get("index")));
+            e.text = JsonUtil.asString(m.get("text"));
+            ev = e;
+        } else if (IrEventType.THINKING_SIGNATURE.equals(event)) {
+            ThinkingSignatureEvent e = new ThinkingSignatureEvent();
+            e.index = orZero(JsonUtil.asInt(m.get("index")));
+            e.signature = JsonUtil.asString(m.get("signature"));
+            ev = e;
+        } else if (IrEventType.TOOL_INPUT_DELTA.equals(event)) {
+            ToolInputDeltaEvent e = new ToolInputDeltaEvent();
+            e.index = orZero(JsonUtil.asInt(m.get("index")));
+            e.partialJson = JsonUtil.asString(m.get("partialJson"));
+            ev = e;
+        } else if (IrEventType.CONTENT_BLOCK_STOP.equals(event)) {
+            ContentBlockStopEvent e = new ContentBlockStopEvent();
+            e.index = orZero(JsonUtil.asInt(m.get("index")));
+            ev = e;
+        } else if (IrEventType.MESSAGE_DELTA.equals(event)) {
+            MessageDeltaEvent e = new MessageDeltaEvent();
+            e.stopReason = JsonUtil.asString(m.get("stopReason"));
+            e.usage = CommonJson.usageFromMap(m.get("usage"));
+            ev = e;
+        } else if (IrEventType.MESSAGE_STOP.equals(event)) {
+            ev = new MessageStopEvent();
+        } else if (IrEventType.ERROR.equals(event)) {
+            ErrorEvent e = new ErrorEvent();
+            e.errorType = JsonUtil.asString(m.get("errorType"));
+            e.message = JsonUtil.asString(m.get("message"));
+            ev = e;
+        } else {
+            throw new IllegalArgumentException("unsupported stream event type: " + event);
         }
-        if (IrEventType.CONTENT_BLOCK_START.equals(event)) {
-            ContentBlockStartEvent ev = new ContentBlockStartEvent();
-            ev.index = orZero(JsonUtil.asInt(m.get("index")));
-            ev.blockKind = JsonUtil.asString(m.get("blockKind"));
-            ev.toolUseId = JsonUtil.asString(m.get("toolUseId"));
-            ev.toolName = JsonUtil.asString(m.get("toolName"));
-            return ev;
-        }
-        if (IrEventType.TEXT_DELTA.equals(event)) {
-            TextDeltaEvent ev = new TextDeltaEvent();
-            ev.index = orZero(JsonUtil.asInt(m.get("index")));
-            ev.text = JsonUtil.asString(m.get("text"));
-            return ev;
-        }
-        if (IrEventType.THINKING_DELTA.equals(event)) {
-            ThinkingDeltaEvent ev = new ThinkingDeltaEvent();
-            ev.index = orZero(JsonUtil.asInt(m.get("index")));
-            ev.text = JsonUtil.asString(m.get("text"));
-            return ev;
-        }
-        if (IrEventType.THINKING_SIGNATURE.equals(event)) {
-            ThinkingSignatureEvent ev = new ThinkingSignatureEvent();
-            ev.index = orZero(JsonUtil.asInt(m.get("index")));
-            ev.signature = JsonUtil.asString(m.get("signature"));
-            return ev;
-        }
-        if (IrEventType.TOOL_INPUT_DELTA.equals(event)) {
-            ToolInputDeltaEvent ev = new ToolInputDeltaEvent();
-            ev.index = orZero(JsonUtil.asInt(m.get("index")));
-            ev.partialJson = JsonUtil.asString(m.get("partialJson"));
-            return ev;
-        }
-        if (IrEventType.CONTENT_BLOCK_STOP.equals(event)) {
-            ContentBlockStopEvent ev = new ContentBlockStopEvent();
-            ev.index = orZero(JsonUtil.asInt(m.get("index")));
-            return ev;
-        }
-        if (IrEventType.MESSAGE_DELTA.equals(event)) {
-            MessageDeltaEvent ev = new MessageDeltaEvent();
-            ev.stopReason = JsonUtil.asString(m.get("stopReason"));
-            ev.usage = CommonJson.usageFromMap(m.get("usage"));
-            return ev;
-        }
-        if (IrEventType.MESSAGE_STOP.equals(event)) {
-            return new MessageStopEvent();
-        }
-        if (IrEventType.ERROR.equals(event)) {
-            ErrorEvent ev = new ErrorEvent();
-            ev.errorType = JsonUtil.asString(m.get("errorType"));
-            ev.message = JsonUtil.asString(m.get("message"));
-            return ev;
-        }
-        throw new IllegalArgumentException("unsupported stream event type: " + event);
+        ev.extensions = (Map<String, Object>) m.get("extensions");
+        return ev;
     }
 
     private static int orZero(Integer i) {

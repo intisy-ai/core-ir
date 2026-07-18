@@ -16,8 +16,12 @@ import io.github.intisy.ai.ir.stream.ThinkingSignatureEvent;
 import io.github.intisy.ai.ir.stream.ToolInputDeltaEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Stateful Anthropic SSE decoder. Buffers partial lines/frames across {@link #decode} calls (a
@@ -25,8 +29,22 @@ import java.util.Map;
  * dispatching on the frame's own {@code type} field ({@code event:} lines are not required).
  * {@code ping} frames carry no semantic payload and are dropped -- every other Anthropic SSE
  * event type maps 1:1 onto the canonical stream event model.
+ *
+ * <p>{@code message_start}'s {@code message} object and {@code message_delta}'s {@code delta}
+ * carry the only vendor-level metadata in the streaming wire format; any field on either that
+ * this codec does not otherwise consume (plus {@code message_delta}'s {@code stop_sequence},
+ * which IR has no field for) round-trips through {@link IrStreamEvent#extensions}, keyed with a
+ * {@code $} prefix when it is bookkeeping this codec invented (never a real Anthropic wire key)
+ * so it is never re-emitted as a genuine field -- mirroring {@code AnthropicBlockCodec}.
  */
 final class AnthropicStreamDecoder implements StreamDecoder {
+    static final String EXT_STOP_SEQUENCE_RAW = "$stopSequenceRaw";
+
+    private static final Set<String> MESSAGE_START_KNOWN_KEYS = new HashSet<>(Arrays.asList(
+            "id", "type", "role", "content", "model", "stop_reason", "stop_sequence", "usage"));
+    private static final Set<String> MESSAGE_DELTA_KNOWN_KEYS = new HashSet<>(Arrays.asList(
+            "stop_reason", "stop_sequence"));
+
     private final JsonCodec json;
     private final StringBuilder lineBuffer = new StringBuilder();
     private final StringBuilder dataBuffer = new StringBuilder();
@@ -102,6 +120,11 @@ final class AnthropicStreamDecoder implements StreamDecoder {
         ev.model = AnthropicJsonUtil.asString(message.get("model"));
         ev.role = AnthropicJsonUtil.asString(message.get("role"));
         ev.usage = AnthropicUsageCodec.decode(message.get("usage"));
+        for (Map.Entry<String, Object> e : message.entrySet()) {
+            if (!MESSAGE_START_KNOWN_KEYS.contains(e.getKey())) {
+                putExtension(ev, e.getKey(), e.getValue());
+            }
+        }
         return ev;
     }
 
@@ -164,9 +187,20 @@ final class AnthropicStreamDecoder implements StreamDecoder {
         Map<String, Object> delta = AnthropicJsonUtil.asMap(frame.get("delta"));
         if (delta != null) {
             ev.stopReason = AnthropicStopReason.toIr(AnthropicJsonUtil.asString(delta.get("stop_reason")));
+            putExtension(ev, EXT_STOP_SEQUENCE_RAW, delta.get("stop_sequence"));
+            for (Map.Entry<String, Object> e : delta.entrySet()) {
+                if (!MESSAGE_DELTA_KNOWN_KEYS.contains(e.getKey())) {
+                    putExtension(ev, e.getKey(), e.getValue());
+                }
+            }
         }
         ev.usage = AnthropicUsageCodec.decode(frame.get("usage"));
         return ev;
+    }
+
+    private static void putExtension(IrStreamEvent event, String key, Object value) {
+        if (event.extensions == null) event.extensions = new LinkedHashMap<>();
+        event.extensions.put(key, value);
     }
 
     private IrStreamEvent decodeError(Map<String, Object> frame) {

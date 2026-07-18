@@ -77,6 +77,7 @@ final class AnthropicStreamEncoder implements StreamEncoder {
         message.put("stop_reason", null);
         message.put("stop_sequence", null);
         message.put("usage", AnthropicUsageCodec.encode(ev.usage));
+        encodeLeftoverExtensions(ev, message);
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("type", "message_start");
         data.put("message", message);
@@ -150,12 +151,22 @@ final class AnthropicStreamEncoder implements StreamEncoder {
     private Map<String, Object> encodeMessageDelta(MessageDeltaEvent ev) {
         Map<String, Object> delta = new LinkedHashMap<>();
         delta.put("stop_reason", ev.stopReason != null ? AnthropicStopReason.toAnthropic(ev.stopReason) : null);
-        delta.put("stop_sequence", null);
+        Object rawStopSequence = ev.extensions == null
+                ? null : ev.extensions.get(AnthropicStreamDecoder.EXT_STOP_SEQUENCE_RAW);
+        delta.put("stop_sequence", rawStopSequence);
+        encodeLeftoverExtensions(ev, delta);
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("type", "message_delta");
         data.put("delta", delta);
         if (ev.usage != null) data.put("usage", AnthropicUsageCodec.encode(ev.usage));
         return data;
+    }
+
+    private static void encodeLeftoverExtensions(IrStreamEvent event, Map<String, Object> m) {
+        if (event.extensions == null) return;
+        for (Map.Entry<String, Object> e : event.extensions.entrySet()) {
+            if (!e.getKey().startsWith("$")) m.put(e.getKey(), e.getValue());
+        }
     }
 
     private Map<String, Object> encodeError(ErrorEvent ev) {

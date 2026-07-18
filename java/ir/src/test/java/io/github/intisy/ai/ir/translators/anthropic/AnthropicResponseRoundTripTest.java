@@ -59,23 +59,43 @@ class AnthropicResponseRoundTripTest {
     }
 
     @Test
+    void pauseTurnAndRefusalMapToIrStopReasonConstants() {
+        JsonCodec json = new TestJsonCodec();
+        AnthropicTranslator translator = new AnthropicTranslator(json);
+
+        for (String reason : new String[] {"pause_turn", "refusal"}) {
+            String wire = "{\"id\":\"msg_02\",\"type\":\"message\",\"role\":\"assistant\","
+                    + "\"model\":\"claude-fable-5\",\"content\":[{\"type\":\"text\",\"text\":\"...\"}],"
+                    + "\"stop_reason\":\"" + reason + "\",\"stop_sequence\":null,"
+                    + "\"usage\":{\"input_tokens\":10,\"output_tokens\":5}}";
+
+            IrResponse decoded = translator.decodeResponse(wire);
+            // Both are now first-class IrStopReason constants, not the lossy ERROR fallback.
+            assertEquals(reason, decoded.stopReason);
+
+            String reEncoded = translator.encodeResponse(decoded);
+            assertEquals(json.parse(wire), json.parse(reEncoded));
+        }
+    }
+
+    @Test
     void unmappedStopReasonSurvivesViaExtensions() {
         String wire = "{\"id\":\"msg_02\",\"type\":\"message\",\"role\":\"assistant\","
                 + "\"model\":\"claude-fable-5\",\"content\":[{\"type\":\"text\",\"text\":\"...\"}],"
-                + "\"stop_reason\":\"pause_turn\",\"stop_sequence\":null,"
+                + "\"stop_reason\":\"some_future_reason\",\"stop_sequence\":null,"
                 + "\"usage\":{\"input_tokens\":10,\"output_tokens\":5}}";
         JsonCodec json = new TestJsonCodec();
         AnthropicTranslator translator = new AnthropicTranslator(json);
 
         IrResponse decoded = translator.decodeResponse(wire);
-        // "pause_turn" has no neutral IrStopReason equivalent -- falls back to ERROR for typed
+        // A genuinely unrecognized future reason still falls back to ERROR for typed
         // consumers, but the exact original string still round-trips via extensions.
         assertEquals(IrStopReason.ERROR, decoded.stopReason);
 
         String reEncoded = translator.encodeResponse(decoded);
         Object reparsed = json.parse(reEncoded);
         assertTrue(reparsed instanceof Map);
-        assertEquals("pause_turn", ((Map<?, ?>) reparsed).get("stop_reason"),
+        assertEquals("some_future_reason", ((Map<?, ?>) reparsed).get("stop_reason"),
                 "the exact Anthropic stop_reason string must survive even though IR has no matching constant");
         assertEquals(json.parse(wire), reparsed);
     }

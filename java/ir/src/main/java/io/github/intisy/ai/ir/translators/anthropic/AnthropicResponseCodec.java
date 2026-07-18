@@ -13,10 +13,12 @@ import java.util.Set;
  * Anthropic Messages API (non-streaming) response {@code Map} tree <-> {@link IrResponse}.
  *
  * <p>{@code stop_reason} and {@code stop_sequence} are stashed verbatim in
- * {@link IrResponse#extensions} alongside the best-effort {@code IrStopReason} mapping: Anthropic
- * has two stop reasons ({@code pause_turn}, {@code refusal}) with no IR equivalent yet, and
- * {@code stop_sequence} carries free text IR has no field for. Restoring the raw value on encode
- * keeps the round trip lossless regardless of that gap. Likewise {@code type}/{@code role} (always
+ * {@link IrResponse#extensions} alongside the best-effort {@code IrStopReason} mapping: every
+ * known Anthropic stop reason (including {@code pause_turn}/{@code refusal}) now round-trips
+ * through the {@code IrStopReason} constants directly, but the raw stash remains a safety net for
+ * a genuinely unrecognized future value, and {@code stop_sequence} carries free text IR has no
+ * field for. Restoring the raw value on encode keeps the round trip lossless regardless of that
+ * gap. Likewise {@code type}/{@code role} (always
  * {@code "message"}/{@code "assistant"} in practice) are preserved verbatim rather than assumed.
  */
 final class AnthropicResponseCodec {

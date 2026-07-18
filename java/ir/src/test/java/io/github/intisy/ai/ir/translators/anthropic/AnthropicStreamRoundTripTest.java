@@ -31,6 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * frames interspersed (dropped -- they carry no semantic payload). The raw SSE text is fed to
  * the decoder split across two chunks to exercise the cross-chunk line buffering, then every
  * decoded event is re-encoded and checked against the original frame it came from.
+ *
+ * <p>The {@code message_delta}'s {@code stop_reason} is the exotic {@code pause_turn} (an
+ * Anthropic reason with no analog on other vendors) to prove it round-trips losslessly through
+ * {@link io.github.intisy.ai.ir.IrStopReason#PAUSE_TURN} rather than falling back to {@code
+ * IrStopReason#ERROR} and coming back out as a different string.
  */
 class AnthropicStreamRoundTripTest {
 
@@ -62,7 +67,7 @@ class AnthropicStreamRoundTripTest {
             "{\"type\":\"content_block_delta\",\"index\":2,"
                     + "\"delta\":{\"type\":\"input_json_delta\",\"partial_json\":\"\\\"Berlin\\\"}\"}}",
             "{\"type\":\"content_block_stop\",\"index\":2}",
-            "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"tool_use\",\"stop_sequence\":null},"
+            "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"pause_turn\",\"stop_sequence\":null},"
                     + "\"usage\":{\"output_tokens\":42}}",
             "{\"type\":\"message_stop\"}");
 
@@ -128,7 +133,7 @@ class AnthropicStreamRoundTripTest {
         assertEquals("{\"city\":", ((ToolInputDeltaEvent) events.get(10)).partialJson);
 
         MessageDeltaEvent messageDelta = (MessageDeltaEvent) events.get(13);
-        assertEquals("tool_use", messageDelta.stopReason);
+        assertEquals("pause_turn", messageDelta.stopReason);
         assertEquals(42, messageDelta.usage.outputTokens);
 
         assertTrue(events.get(14) instanceof MessageStopEvent);
