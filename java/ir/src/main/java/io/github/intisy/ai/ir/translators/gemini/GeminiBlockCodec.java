@@ -6,6 +6,7 @@ import io.github.intisy.ai.ir.TextBlock;
 import io.github.intisy.ai.ir.ThinkingBlock;
 import io.github.intisy.ai.ir.ToolResultBlock;
 import io.github.intisy.ai.ir.ToolUseBlock;
+import io.github.intisy.ai.ir.UnknownBlock;
 import io.github.intisy.ai.ir.spi.JsonCodec;
 
 import java.util.ArrayList;
@@ -117,7 +118,13 @@ final class GeminiBlockCodec {
         if (part.get("text") instanceof String) {
             return new TextBlock((String) part.get("text"));
         }
-        throw new IllegalArgumentException("unsupported Gemini part: " + part.keySet());
+        // An unrecognized Gemini part shape (e.g. executableCode/codeExecutionResult) -- stash it
+        // verbatim rather than throw, mirroring AnthropicBlockCodec's UnknownBlock handling (core-ir
+        // main@fee2bac): a translator ahead of a real upstream must never fail a whole response over
+        // ONE part it doesn't recognize.
+        UnknownBlock u = new UnknownBlock();
+        u.raw = new LinkedHashMap<>(part);
+        return u;
     }
 
     private static Block decodeFunctionCall(Map<String, Object> fc) {
@@ -167,6 +174,13 @@ final class GeminiBlockCodec {
 
     static Map<String, Object> encodePart(JsonCodec json, Block block, Map<String, String> toolNames, Set<String> syntheticIds) {
         if (block == null) return null;
+        if (block instanceof UnknownBlock) {
+            // Return the stashed raw map verbatim (mirrors AnthropicBlockCodec.encodeBlock) -- a
+            // block this codec never modeled (including one that arrived via a DIFFERENT vendor's
+            // decode, e.g. an Anthropic `document` block riding through IR into a Gemini request)
+            // must not crash the encode side either.
+            return new LinkedHashMap<>(((UnknownBlock) block).raw);
+        }
         if (block instanceof TextBlock) {
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("text", ((TextBlock) block).text);
