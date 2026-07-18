@@ -1,0 +1,20 @@
+{
+  "name": "core-ir",
+  "version": "0.1.0",
+  "description": "Canonical vendor-neutral IR (internal representation) types for the intisy AI-tooling ecosystem, Java + TeaVM single-source",
+  "type": "module",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "author": "intisy",
+  "repository": { "type": "git", "url": "git+https://github.com/intisy-ai/core-ir.git" },
+  "keywords": ["ir", "canonical-ir", "anthropic", "gemini", "ai", "intisy", "core-ir"],
+  "files": ["dist/", "README.md", "LICENSE"],
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "build:teavm": "node teavm-build.mjs --java-dir java --module :teavm --out src/generated/core-ir.teavm.js",
+    "build": "npm run build:teavm && tsc && node build.mjs",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": { "typescript": "^5.6.0", "vitest": "^2.1.0", "@types/node": "^22.0.0", "esbuild": "^0.21.5" }
+}

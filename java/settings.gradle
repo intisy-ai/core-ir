@@ -1,0 +1,8 @@
+rootProject.name = "core-ir-java"
+
+// :ir     - neutral IR types (request/response/streaming/extensions) + JSON codec SPI,
+//           transpilable Java 8, no gson/net/nio/reflect/threads.
+// :teavm  - TeaVM JS export surface over :ir (SimpleJsonCodec, IrJs) -> generateJavaScript
+//           emits an ES2015 module.
+include ":ir"
+include ":teavm"

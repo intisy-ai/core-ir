@@ -1,0 +1,5 @@
+// IR types + JSON codec SPI + IR<->Map(de)serialize helper. Zero-dependency by design (no
+// gson/java.net/java.nio/reflection/threads) so this module transpiles cleanly under TeaVM
+// (see ../teavm).
+dependencies {
+}
