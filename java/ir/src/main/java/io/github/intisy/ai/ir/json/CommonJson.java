@@ -58,9 +58,11 @@ final class CommonJson {
         m.put("name", t.name);
         if (t.description != null) m.put("description", t.description);
         m.put("inputSchema", t.inputSchema);
+        if (t.extensions != null) m.put("extensions", t.extensions);
         return m;
     }
 
+    @SuppressWarnings("unchecked")
     static IrTool toolFromMap(Object o) {
         Map<String, Object> m = JsonUtil.asMap(o);
         if (m == null) return null;
@@ -68,6 +70,7 @@ final class CommonJson {
         t.name = JsonUtil.asString(m.get("name"));
         t.description = JsonUtil.asString(m.get("description"));
         t.inputSchema = m.get("inputSchema");
+        t.extensions = (Map<String, Object>) m.get("extensions");
         return t;
     }
 
@@ -76,15 +79,18 @@ final class CommonJson {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("type", c.type);
         if (c.name != null) m.put("name", c.name);
+        if (c.extensions != null) m.put("extensions", c.extensions);
         return m;
     }
 
+    @SuppressWarnings("unchecked")
     static IrToolChoice toolChoiceFromMap(Object o) {
         Map<String, Object> m = JsonUtil.asMap(o);
         if (m == null) return null;
         IrToolChoice c = new IrToolChoice();
         c.type = JsonUtil.asString(m.get("type"));
         c.name = JsonUtil.asString(m.get("name"));
+        c.extensions = (Map<String, Object>) m.get("extensions");
         return c;
     }
 }
