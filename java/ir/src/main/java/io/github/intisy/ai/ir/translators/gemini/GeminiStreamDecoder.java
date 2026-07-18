@@ -47,8 +47,6 @@ import java.util.Map;
  */
 final class GeminiStreamDecoder implements StreamDecoder {
     private static final String EXT_FINISH_REASON_RAW = "$finishReasonRaw";
-    private static final String EXT_USAGE_THOUGHTS_TOKEN_COUNT = "$usageThoughtsTokenCount";
-    private static final String EXT_USAGE_TOTAL_TOKEN_COUNT = "$usageTotalTokenCount";
 
     private final JsonCodec json;
     private final StringBuilder lineBuffer = new StringBuilder();
@@ -149,8 +147,6 @@ final class GeminiStreamDecoder implements StreamDecoder {
             mde.stopReason = sawToolUse ? IrStopReason.TOOL_USE : GeminiFinishReason.toIr(finishReason);
             mde.usage = buildUsage();
             putExtension(mde, EXT_FINISH_REASON_RAW, finishReason);
-            if (thoughtsTokens != null) putExtension(mde, EXT_USAGE_THOUGHTS_TOKEN_COUNT, thoughtsTokens);
-            if (totalTokens != null) putExtension(mde, EXT_USAGE_TOTAL_TOKEN_COUNT, totalTokens);
             out.add(mde);
             out.add(new MessageStopEvent());
         }
@@ -248,6 +244,8 @@ final class GeminiStreamDecoder implements StreamDecoder {
         IrUsage usage = new IrUsage();
         usage.inputTokens = inputTokens;
         usage.outputTokens = outputTokens;
+        usage.reasoningTokens = thoughtsTokens;
+        usage.totalTokens = totalTokens;
         return usage;
     }
 

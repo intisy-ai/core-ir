@@ -26,11 +26,9 @@ import java.util.Set;
  * anywhere in {@code content} forces {@link io.github.intisy.ai.ir.IrStopReason#TOOL_USE}
  * regardless of the wire {@code finishReason}.
  *
- * <p>{@code usageMetadata.thoughtsTokenCount}/{@code totalTokenCount} have no neutral
- * {@link IrUsage} field (see {@link GeminiUsageCodec}) and round-trip via {@code extensions}
- * instead -- flagged in the T3 report as a candidate {@link IrUsage} field for a future IR tweak,
- * since Gemini surfaces reasoning-token accounting explicitly where Anthropic folds it into
- * {@code output_tokens}.
+ * <p>{@code usageMetadata.thoughtsTokenCount}/{@code totalTokenCount} map directly onto
+ * {@link IrUsage#reasoningTokens}/{@link IrUsage#totalTokens} via {@link GeminiUsageCodec} --
+ * no {@code extensions} stashing needed.
  */
 final class GeminiResponseCodec {
     private GeminiResponseCodec() {
@@ -39,8 +37,6 @@ final class GeminiResponseCodec {
     private static final String EXT_FINISH_REASON_RAW = "$finishReasonRaw";
     private static final String EXT_CANDIDATE_INDEX_RAW = "$candidateIndexRaw";
     private static final String EXT_CANDIDATES_EXTRA = "$candidatesExtra";
-    private static final String EXT_USAGE_THOUGHTS_TOKEN_COUNT = "$usageThoughtsTokenCount";
-    private static final String EXT_USAGE_TOTAL_TOKEN_COUNT = "$usageTotalTokenCount";
 
     private static final Set<String> TOP_LEVEL_KNOWN_KEYS = new HashSet<>(Arrays.asList(
             "candidates", "usageMetadata", "modelVersion", "responseId"));
@@ -64,14 +60,6 @@ final class GeminiResponseCodec {
 
         Map<String, Object> usageMetadata = GeminiJsonUtil.asMap(root.get("usageMetadata"));
         r.usage = GeminiUsageCodec.decode(usageMetadata);
-        if (usageMetadata != null) {
-            if (usageMetadata.get("thoughtsTokenCount") != null) {
-                putExtension(r, EXT_USAGE_THOUGHTS_TOKEN_COUNT, usageMetadata.get("thoughtsTokenCount"));
-            }
-            if (usageMetadata.get("totalTokenCount") != null) {
-                putExtension(r, EXT_USAGE_TOTAL_TOKEN_COUNT, usageMetadata.get("totalTokenCount"));
-            }
-        }
 
         for (Map.Entry<String, Object> e : root.entrySet()) {
             if (!TOP_LEVEL_KNOWN_KEYS.contains(e.getKey())) {
@@ -130,12 +118,7 @@ final class GeminiResponseCodec {
         m.put("candidates", candidates);
 
         if (r.usage != null) {
-            Map<String, Object> usageMetadata = GeminiUsageCodec.encode(r.usage);
-            Object thoughts = r.extensions == null ? null : r.extensions.get(EXT_USAGE_THOUGHTS_TOKEN_COUNT);
-            if (thoughts != null) usageMetadata.put("thoughtsTokenCount", thoughts);
-            Object total = r.extensions == null ? null : r.extensions.get(EXT_USAGE_TOTAL_TOKEN_COUNT);
-            if (total != null) usageMetadata.put("totalTokenCount", total);
-            m.put("usageMetadata", usageMetadata);
+            m.put("usageMetadata", GeminiUsageCodec.encode(r.usage));
         }
 
         if (r.model != null) m.put("modelVersion", r.model);

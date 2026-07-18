@@ -20,6 +20,8 @@ final class CommonJson {
         m.put("outputTokens", u.outputTokens);
         if (u.cacheReadInputTokens != null) m.put("cacheReadInputTokens", u.cacheReadInputTokens);
         if (u.cacheCreationInputTokens != null) m.put("cacheCreationInputTokens", u.cacheCreationInputTokens);
+        if (u.reasoningTokens != null) m.put("reasoningTokens", u.reasoningTokens);
+        if (u.totalTokens != null) m.put("totalTokens", u.totalTokens);
         return m;
     }
 
@@ -31,6 +33,8 @@ final class CommonJson {
         u.outputTokens = JsonUtil.asInt(m.get("outputTokens"));
         u.cacheReadInputTokens = JsonUtil.asInt(m.get("cacheReadInputTokens"));
         u.cacheCreationInputTokens = JsonUtil.asInt(m.get("cacheCreationInputTokens"));
+        u.reasoningTokens = JsonUtil.asInt(m.get("reasoningTokens"));
+        u.totalTokens = JsonUtil.asInt(m.get("totalTokens"));
         return u;
     }
 

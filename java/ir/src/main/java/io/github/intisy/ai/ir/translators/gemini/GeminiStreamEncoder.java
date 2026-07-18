@@ -159,12 +159,7 @@ final class GeminiStreamEncoder implements StreamEncoder {
         data.put("candidates", candidates);
 
         if (ev.usage != null) {
-            Map<String, Object> usageMetadata = GeminiUsageCodec.encode(ev.usage);
-            Object thoughts = ev.extensions == null ? null : ev.extensions.get("$usageThoughtsTokenCount");
-            if (thoughts != null) usageMetadata.put("thoughtsTokenCount", thoughts);
-            Object total = ev.extensions == null ? null : ev.extensions.get("$usageTotalTokenCount");
-            if (total != null) usageMetadata.put("totalTokenCount", total);
-            data.put("usageMetadata", usageMetadata);
+            data.put("usageMetadata", GeminiUsageCodec.encode(ev.usage));
         }
         if (model != null) data.put("modelVersion", model);
         return data;

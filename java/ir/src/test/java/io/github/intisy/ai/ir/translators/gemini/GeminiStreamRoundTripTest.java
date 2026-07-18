@@ -53,7 +53,8 @@ class GeminiStreamRoundTripTest {
                     + "{\"functionCall\":{\"id\":\"call_03\",\"name\":\"get_weather\",\"args\":{\"city\":\"Berlin\"}}}"
                     + "]}}],\"usageMetadata\":{\"promptTokenCount\":30}}",
             "{\"candidates\":[{\"content\":{\"role\":\"model\",\"parts\":[]},\"finishReason\":\"STOP\"}],"
-                    + "\"usageMetadata\":{\"promptTokenCount\":30,\"candidatesTokenCount\":42}}");
+                    + "\"usageMetadata\":{\"promptTokenCount\":30,\"candidatesTokenCount\":42,"
+                    + "\"totalTokenCount\":72,\"thoughtsTokenCount\":8}}");
 
     private static String buildSse() {
         StringBuilder sb = new StringBuilder();
@@ -111,6 +112,8 @@ class GeminiStreamRoundTripTest {
                 "a functionCall earlier in the stream forces tool_use, even though the terminal finishReason is STOP");
         assertEquals(30, messageDelta.usage.inputTokens);
         assertEquals(42, messageDelta.usage.outputTokens);
+        assertEquals(72, messageDelta.usage.totalTokens);
+        assertEquals(8, messageDelta.usage.reasoningTokens);
 
         assertTrue(events.get(13) instanceof MessageStopEvent);
     }

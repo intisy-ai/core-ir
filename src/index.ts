@@ -1,7 +1,7 @@
-// Public barrel for core-ir. T1 (this foundation) ships only the IR-round-trip smoke surface
-// proven through the TeaVM pipeline -- the IR types themselves are Java+TeaVM single-sourced
-// (see java/ir), consumed from TS via this generated ESM. Vendor translators (Anthropic/Gemini)
-// and their exports land in later sub-projects (SP-2+, see the canonical IR design doc).
+// Public barrel for core-ir: the IR types are Java+TeaVM single-sourced (see java/ir), consumed
+// from TS via the generated ESM loaded by loadCoreIr() below; translators.ts wraps that surface in
+// a typed, ergonomic API (translators.anthropic/translators.gemini) for both non-streaming and
+// true-streaming (TransformStream) use.
 
 // Lazily-memoized dynamic import of the TeaVM ESM -- staged to src/generated/ by
 // `npm run build:teavm` ahead of tsc, matching the pattern used by antigravity-auth's
@@ -14,3 +14,6 @@ export function loadCoreIr(): Promise<typeof import("./generated/core-ir.teavm.j
   }
   return modulePromise;
 }
+
+export * from "./translators.js";
+export * from "./types.js";

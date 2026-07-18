@@ -56,6 +56,10 @@ class GeminiResponseRoundTripTest {
         assertEquals(512, decoded.usage.inputTokens);
         assertEquals(128, decoded.usage.outputTokens);
         assertEquals(50, decoded.usage.cacheReadInputTokens);
+        assertEquals(12, decoded.usage.reasoningTokens,
+                "thoughtsTokenCount maps onto the neutral IrUsage#reasoningTokens field");
+        assertEquals(692, decoded.usage.totalTokens,
+                "totalTokenCount maps onto the neutral IrUsage#totalTokens field");
     }
 
     @Test
