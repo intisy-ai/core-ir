@@ -76,7 +76,10 @@ final class AnthropicStreamEncoder implements StreamEncoder {
         message.put("model", ev.model);
         message.put("stop_reason", null);
         message.put("stop_sequence", null);
-        message.put("usage", AnthropicUsageCodec.encode(ev.usage));
+        // A real Anthropic message_start ALWAYS carries a concrete usage object (never null/absent) --
+        // default to zero rather than emitting `usage: null` when the source vendor's stream never
+        // reported any token counts (e.g. a Gemini SSE with no usageMetadata chunk at all).
+        message.put("usage", ev.usage != null ? AnthropicUsageCodec.encode(ev.usage) : zeroInputOutputUsage());
         encodeLeftoverExtensions(ev, message);
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("type", "message_start");
@@ -158,8 +161,23 @@ final class AnthropicStreamEncoder implements StreamEncoder {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("type", "message_delta");
         data.put("delta", delta);
-        if (ev.usage != null) data.put("usage", AnthropicUsageCodec.encode(ev.usage));
+        // A real Anthropic message_delta ALWAYS carries a usage object too (at minimum
+        // {output_tokens}) -- same zero-default reasoning as encodeMessageStart above.
+        data.put("usage", ev.usage != null ? AnthropicUsageCodec.encode(ev.usage) : zeroOutputUsage());
         return data;
+    }
+
+    private static Map<String, Object> zeroInputOutputUsage() {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("input_tokens", 0);
+        m.put("output_tokens", 0);
+        return m;
+    }
+
+    private static Map<String, Object> zeroOutputUsage() {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("output_tokens", 0);
+        return m;
     }
 
     private static void encodeLeftoverExtensions(IrStreamEvent event, Map<String, Object> m) {
