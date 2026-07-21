@@ -115,7 +115,7 @@ export interface IrResponse {
   extensions?: Record<string, unknown> | null;
 }
 
-// ---- Streaming event model (T2.5) --------------------------------------------------------------
+// ---- Streaming event model ----------------------------------------------------------------------
 
 export type ContentBlockKind = "text" | "tool_use" | "thinking";
 

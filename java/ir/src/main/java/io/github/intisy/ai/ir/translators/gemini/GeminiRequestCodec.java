@@ -20,8 +20,7 @@ import java.util.Set;
 
 /**
  * Gemini {@code generateContent} request {@code Map} tree <-> {@link IrRequest}. Field mapping
- * (see the canonical IR design doc's "Translator interface"/"Fidelity" sections and
- * {@code GeminiBlockCodec}'s javadoc for the block-level shapes this builds on):
+ * (see {@code GeminiBlockCodec}'s javadoc for the block-level shapes this builds on):
  * {@code contents[]} &lt;-&gt; {@code messages} ({@code model}/{@code user} roles; IR's
  * {@code tool} role FOLDS into a Gemini {@code user} turn on encode, matching the real API's
  * convention that a {@code functionResponse} rides in a {@code user}-role turn -- there is no
@@ -34,7 +33,7 @@ import java.util.Set;
  * <h2>{@code model} has no Gemini request-body home</h2>
  * The real Gemini {@code generateContent} REST API carries the model in the URL path
  * ({@code models/{model}:generateContent}), never in the JSON body -- that URL/transport concern
- * is out of core-ir's scope (it belongs to the antigravity/Gemini PROVIDER, SP-2). This codec
+ * is out of core-ir's scope (it belongs to the antigravity/Gemini PROVIDER). This codec
  * still reads/writes an optional top-level {@code model} string when present (some Gemini-family
  * client SDKs do embed it), so {@code IrRequest#model} survives when the wire happens to carry it,
  * without requiring it.

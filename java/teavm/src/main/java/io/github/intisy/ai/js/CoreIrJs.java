@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TeaVM JS export surface over core-ir's IR types and vendor translators (SP-1: T1 round-trip
- * smoke exports + T2/T2.5/T3's {@link AnthropicTranslator}/{@link GeminiTranslator}). Mirrors
+ * TeaVM JS export surface over core-ir's IR types and vendor translators (round-trip smoke
+ * exports plus the {@link AnthropicTranslator}/{@link GeminiTranslator} translators). Mirrors
  * core-proxy's {@code io.github.intisy.ai.js.CoreProxyJs} export style for non-streaming calls
  * (bare static {@code @JSExport} methods over JSON strings, no gson, no reflection) and
  * antigravity-auth's {@code AntigravityProviderJs.newStreamMapper}/{@code JsStreamMapperHandle}

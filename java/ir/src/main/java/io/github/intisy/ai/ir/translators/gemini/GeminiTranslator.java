@@ -14,8 +14,7 @@ import io.github.intisy.ai.ir.spi.Translator;
  * {@code tools}/{@code toolConfig}/{@code generationConfig}; {@code candidates}/
  * {@code usageMetadata}/{@code finishReason}; {@code streamGenerateContent} SSE) -- the
  * cloudcode-pa transport envelope, URL, {@code v1internal:} path, project id and auth headers
- * belong to the antigravity PROVIDER, not this library (see the canonical IR design doc's
- * decomposition: this is SP-1, library-only).
+ * belong to the antigravity PROVIDER, not this library.
  *
  * <p>No gson, no reflection: JSON (de)serialization goes through the injected {@link JsonCodec},
  * matching {@code AnthropicTranslator} and the rest of this module's SPI-injection pattern.
@@ -26,7 +25,7 @@ import io.github.intisy.ai.ir.spi.Translator;
  * see {@code GeminiRequestCodec}/{@code GeminiResponseCodec}/{@code GeminiBlockCodec}'s javadoc
  * for the field-by-field mapping decisions and what deliberately stays out of scope (antigravity's
  * own provider-specific workarounds -- schema placeholder-filling, {@code VALIDATED} tool-choice
- * mode, conversation re-alternation/merging, thinking-signature caching -- are SP-2 provider
+ * mode, conversation re-alternation/merging, thinking-signature caching -- are provider
  * concerns, not part of the neutral Gemini wire format this translator implements).
  */
 public final class GeminiTranslator implements Translator {

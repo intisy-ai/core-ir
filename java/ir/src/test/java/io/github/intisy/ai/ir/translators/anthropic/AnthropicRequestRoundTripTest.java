@@ -24,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * real-shaped Anthropic Messages API request exercising system + multi-turn messages (with a
  * plain-string turn) + {@code tool_use}/{@code tool_result} + a {@code thinking} block with a
  * signature + block-level and tool-level {@code cache_control}. Fidelity is asserted by
- * comparing the JSON parsed as maps (per the canonical IR design doc's "Fidelity" section), not
- * raw strings, since key order is not semantically meaningful.
+ * comparing the JSON parsed as maps, not raw strings, since key order is not semantically
+ * meaningful.
  */
 class AnthropicRequestRoundTripTest {
 

@@ -41,8 +41,8 @@ import java.util.Set;
  * (optionally {@code isError}); {@link #decodePart} recognizes that shape and unwraps it into a
  * single {@link TextBlock} for IR consumers, restoring it exactly on {@link #encodePart}. Any other
  * shape (arbitrary {@code response} object) round-trips verbatim through
- * {@link #EXT_RESPONSE_RAW} -- lossless for the same vendor, per the design doc's "Fidelity"
- * section -- with a JSON-stringified {@link TextBlock} standing in as the readable IR content.
+ * {@link #EXT_RESPONSE_RAW} (lossless for the same vendor) with a JSON-stringified
+ * {@link TextBlock} standing in as the readable IR content.
  */
 final class GeminiBlockCodec {
     private GeminiBlockCodec() {
@@ -119,9 +119,9 @@ final class GeminiBlockCodec {
             return new TextBlock((String) part.get("text"));
         }
         // An unrecognized Gemini part shape (e.g. executableCode/codeExecutionResult) -- stash it
-        // verbatim rather than throw, mirroring AnthropicBlockCodec's UnknownBlock handling (core-ir
-        // main@fee2bac): a translator ahead of a real upstream must never fail a whole response over
-        // ONE part it doesn't recognize.
+        // verbatim rather than throw, mirroring AnthropicBlockCodec's UnknownBlock handling: a
+        // translator ahead of a real upstream must never fail a whole response over ONE part it
+        // doesn't recognize.
         UnknownBlock u = new UnknownBlock();
         u.raw = new LinkedHashMap<>(part);
         return u;

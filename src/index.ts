@@ -4,8 +4,7 @@
 // true-streaming (TransformStream) use.
 
 // Lazily-memoized dynamic import of the TeaVM ESM -- staged to src/generated/ by
-// `npm run build:teavm` ahead of tsc, matching the pattern used by antigravity-auth's
-// javaHandle.ts loadOrchestrator().
+// `npm run build:teavm` ahead of tsc.
 let modulePromise: Promise<typeof import("./generated/core-ir.teavm.js")> | null = null;
 
 export function loadCoreIr(): Promise<typeof import("./generated/core-ir.teavm.js")> {

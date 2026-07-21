@@ -1,10 +1,8 @@
-// TS-facing translator API: a thin wrapper over the TeaVM-generated JS (core-proxy/antigravity-auth
-// style -- see src/index.ts's loadCoreIr()). Non-streaming calls are one round trip through the
-// Java translator per call; streaming calls hand back a real TransformStream driven chunk-by-chunk
-// by a stateful Java-side handle (newStreamDecoder/newStreamEncoder), mirroring antigravity-auth's
-// proven streaming-over-TeaVM technique (src/driver/javaStream.ts's makeAnthropicStream over the
-// Java newStreamMapper handle): all SSE line-buffering and event-building decisions run in Java,
-// this shell only owns bytes-in/JSON-out.
+// TS-facing translator API: a thin wrapper over the TeaVM-generated JS (see src/index.ts's
+// loadCoreIr()). Non-streaming calls are one round trip through the Java translator per call;
+// streaming calls hand back a real TransformStream driven chunk-by-chunk by a stateful Java-side
+// handle (newStreamDecoder/newStreamEncoder): all SSE line-buffering and event-building decisions
+// run in Java, this shell only owns bytes-in/JSON-out.
 
 import { loadCoreIr } from "./index.js";
 import type { IrRequest, IrResponse, IrStreamEvent } from "./types.js";

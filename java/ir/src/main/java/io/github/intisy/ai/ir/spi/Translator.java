@@ -4,13 +4,12 @@ import io.github.intisy.ai.ir.IrRequest;
 import io.github.intisy.ai.ir.IrResponse;
 
 /**
- * Symmetric per-vendor translator contract (see the canonical IR design doc's "Translator
- * interface" section). Each vendor (Anthropic, Gemini, ...) implements this to convert its own
- * wire format to/from the canonical IR, for both non-streaming and streaming traffic.
+ * Symmetric per-vendor translator contract. Each vendor (Anthropic, Gemini, ...) implements this
+ * to convert its own wire format to/from the canonical IR, for both non-streaming and streaming
+ * traffic.
  *
  * <p>Guarantee: {@code decodeRequest(wire) -> encodeRequest} (and the response/stream
- * equivalents) reproduce a semantically-equal payload for the same vendor -- see the design
- * doc's "Fidelity / lossless round-trip" section.
+ * equivalents) reproduce a semantically-equal payload for the same vendor.
  */
 public interface Translator {
     IrRequest decodeRequest(String wireJson);

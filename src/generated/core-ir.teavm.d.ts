@@ -3,13 +3,13 @@
 // generated core-ir.teavm.js itself is gitignored (build output); this .d.ts is committed source
 // so tsc can type-check consumers of `loadCoreIr()` without needing the build to have run first.
 
-// T1 foundation: bare round-trip smoke exports proving the pipeline is wired end to end.
+// Bare round-trip smoke exports proving the pipeline is wired end to end.
 export function jsonRoundTrip(json: string): string;
 export function irRequestRoundTrip(wireJson: string): string;
 export function irResponseRoundTrip(wireJson: string): string;
 export function irStreamEventRoundTrip(wireJson: string): string;
 
-// Non-streaming translator exports (T2/T3): vendor wireJson <-> core-ir's own IrRequest/IrResponse
+// Non-streaming translator exports: vendor wireJson <-> core-ir's own IrRequest/IrResponse
 // JSON shape (the same shape IrJson.serialize*/parse* produce -- see src/types.ts).
 export function anthropicDecodeRequest(wireJson: string): string;
 export function anthropicEncodeRequest(irRequestJson: string): string;
@@ -20,7 +20,7 @@ export function geminiEncodeRequest(irRequestJson: string): string;
 export function geminiDecodeResponse(wireJson: string): string;
 export function geminiEncodeResponse(irResponseJson: string): string;
 
-// Streaming translator exports (T2.5): stateful per-connection handles. `decode` takes one raw
+// Streaming translator exports: stateful per-connection handles. `decode` takes one raw
 // vendor chunk (partial lines/frames are buffered internally, across calls) and returns a JSON
 // array of IR stream-event objects completed by that chunk (often empty). `encode` takes one IR
 // stream-event's JSON and returns the vendor's wire text for it (an SSE frame, or "" when that

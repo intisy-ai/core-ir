@@ -33,9 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code content_block_stop} are synthesized transitions with no source frame of their own), so
  * this test asserts the DECODED event sequence directly, then separately proves the round trip by
  * re-encoding the event list and decoding it again, checking the SECOND decode reaches the same
- * semantic content (this is the streaming-protocol-appropriate reading of the design doc's
- * "streaming by replaying recorded SSE -> IR events -> re-encode" guidance, given Gemini's chunks
- * are not frame-symmetric the way Anthropic's are).
+ * semantic content, since Gemini's chunks are not frame-symmetric the way Anthropic's are.
  */
 class GeminiStreamRoundTripTest {
 

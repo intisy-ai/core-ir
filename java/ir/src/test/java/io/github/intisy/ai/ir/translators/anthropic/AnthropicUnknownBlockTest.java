@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A content block whose {@code type} this codec has no typed model for (e.g. Anthropic's
  * {@code document} content block, not yet ported here) must round-trip losslessly instead of
  * throwing -- a provider sitting between a real client and a real upstream cannot afford to
- * fail an entire request/response over ONE block it doesn't recognize (surfaced while wiring
- * claude-code-auth's request prep through the IR, SP-2).
+ * fail an entire request/response over ONE block it doesn't recognize.
  */
 class AnthropicUnknownBlockTest {
 

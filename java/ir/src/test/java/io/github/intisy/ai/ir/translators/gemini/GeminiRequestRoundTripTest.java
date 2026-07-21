@@ -28,9 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * real-shaped Gemini {@code generateContent} request exercising a system instruction + multi-turn
  * {@code contents} (with an inline image) + {@code functionCall}/{@code functionResponse} +
  * a {@code thought} block with a {@code thoughtSignature} + {@code generationConfig} including
- * {@code thinkingConfig}. Fidelity is asserted by comparing the JSON parsed as maps (per the
- * canonical IR design doc's "Fidelity" section), not raw strings, since key order is not
- * semantically meaningful.
+ * {@code thinkingConfig}. Fidelity is asserted by comparing the JSON parsed as maps, not raw
+ * strings, since key order is not semantically meaningful.
  */
 class GeminiRequestRoundTripTest {
 

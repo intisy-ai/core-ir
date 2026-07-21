@@ -5,8 +5,7 @@ import java.util.Map;
 
 /**
  * The canonical, vendor-neutral request. A front-door (loader/proxy) builds this from the
- * client's wire format; a provider translates it to its own upstream. See the canonical IR
- * design doc's "IR schema" section for the full field-by-field rationale.
+ * client's wire format; a provider translates it to its own upstream.
  */
 public final class IrRequest {
     public String model;

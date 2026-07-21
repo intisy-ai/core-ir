@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A couple of streaming events round trip through JSON, covering the discriminator dispatch for
  * both a field-bearing event ({@link MessageStartEvent}) and a fieldless one
  * ({@link MessageStopEvent}), plus the {@link ThinkingSignatureEvent}/{@link ToolInputDeltaEvent}
- * shapes called out in the design doc's streaming event model.
+ * shapes.
  */
 class IrStreamEventRoundTripTest {
 

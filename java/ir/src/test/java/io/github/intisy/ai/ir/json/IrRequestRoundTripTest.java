@@ -26,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Fidelity contract: {@code IrRequest -> JSON -> IrRequest -> JSON} is byte-identical (the
- * "lossless round trip" guarantee from the canonical IR design doc), across a request that
- * exercises every {@link Block} kind plus an {@code extensions} passthrough entry.
+ * lossless round-trip guarantee), across a request that exercises every {@link Block} kind
+ * plus an {@code extensions} passthrough entry.
  */
 class IrRequestRoundTripTest {
 
