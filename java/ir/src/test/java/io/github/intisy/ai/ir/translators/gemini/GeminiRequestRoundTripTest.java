@@ -173,7 +173,7 @@ class GeminiRequestRoundTripTest {
     @Test
     void irToolRoleMessageFoldsIntoGeminiUserTurnOnEncode() {
         // A hypothetical front-door that models a distinct IR "tool" role (Gemini has none: a
-        // tool result rides in a "user" turn, exactly like Anthropic's tool_result convention).
+        // tool result rides in a "user" turn, exactly like other vendors' tool-result conventions).
         ToolUseBlock toolUse = new ToolUseBlock();
         toolUse.id = "call_09";
         toolUse.name = "get_weather";

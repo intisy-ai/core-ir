@@ -23,10 +23,11 @@ import java.util.Map;
 
 /**
  * Stateful {@code streamGenerateContent} ({@code alt=sse}) decoder. Each Gemini SSE frame is a
- * bare {@code data: <chunk>} line (no {@code event:} discriminator, unlike Anthropic) carrying a
- * (partial) {@code GenerateContentResponse} -- structurally identical to the non-streaming
- * response body ({@code candidates[].content.parts}/{@code finishReason}/{@code usageMetadata}).
- * Line-buffers across {@link #decode} calls exactly like {@code AnthropicStreamDecoder}.
+ * bare {@code data: <chunk>} line (no {@code event:} discriminator, unlike some other vendors'
+ * SSE) carrying a (partial) {@code GenerateContentResponse} -- structurally identical to the
+ * non-streaming response body ({@code candidates[].content.parts}/{@code finishReason}/
+ * {@code usageMetadata}). Line-buffers across {@link #decode} calls exactly like other stream
+ * decoders in this module.
  *
  * <p>Reuses the battle-tested per-part state machine from antigravity-auth's
  * {@code AntigravityStreamMapper.handleObj} (open/close a content block on
@@ -216,7 +217,7 @@ final class GeminiStreamDecoder implements StreamDecoder {
             out.add(delta);
         }
         // inlineData/fileData/other part kinds mid-stream: no IR stream-event home, dropped (lenient,
-        // mirroring AnthropicStreamDecoder's silent drop of unrecognized delta/frame types).
+        // mirroring how other stream decoders in this module silently drop unrecognized frame types).
     }
 
     private void closeBlock(List<IrStreamEvent> out) {

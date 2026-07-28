@@ -1,9 +1,9 @@
 package io.github.intisy.ai.ir.translators.gemini;
 
 import io.github.intisy.ai.ir.IrRequest;
+import io.github.intisy.ai.ir.json.IrJson;
 import io.github.intisy.ai.ir.json.TestJsonCodec;
 import io.github.intisy.ai.ir.spi.JsonCodec;
-import io.github.intisy.ai.ir.translators.anthropic.AnthropicTranslator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,39 +13,38 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Proves the canonical IR is a real interchange, not a private detail of one translator pair:
- * decode a genuine Anthropic Messages API request, then re-encode the SAME {@link IrRequest} as a
+ * parse a canonical {@link IrRequest} carrying a tool-use/tool-result turn, then encode it as a
  * Gemini {@code generateContent} body with no vendor-specific glue in between.
  */
 class CrossVendorTranslatorTest {
 
-    private static final String ANTHROPIC_WIRE = "{"
+    private static final String IR_REQUEST = "{"
             + "\"model\":\"claude-opus-4-8\","
-            + "\"max_tokens\":1024,"
-            + "\"system\":\"You are a helpful assistant.\","
+            + "\"system\":[{\"kind\":\"text\",\"text\":\"You are a helpful assistant.\"}],"
             + "\"messages\":["
-            + "{\"role\":\"user\",\"content\":\"What is the weather in Berlin?\"},"
+            + "{\"role\":\"user\",\"content\":[{\"kind\":\"text\",\"text\":\"What is the weather in Berlin?\"}]},"
             + "{\"role\":\"assistant\",\"content\":["
-            + "{\"type\":\"tool_use\",\"id\":\"toolu_01\",\"name\":\"get_weather\",\"input\":{\"city\":\"Berlin\"}}"
+            + "{\"kind\":\"tool_use\",\"id\":\"toolu_01\",\"name\":\"get_weather\",\"input\":{\"city\":\"Berlin\"}}"
             + "]},"
             + "{\"role\":\"user\",\"content\":["
-            + "{\"type\":\"tool_result\",\"tool_use_id\":\"toolu_01\",\"content\":\"18C, cloudy\"}"
+            + "{\"kind\":\"tool_result\",\"toolUseId\":\"toolu_01\",\"content\":[{\"kind\":\"text\",\"text\":\"18C, cloudy\"}]}"
             + "]}"
             + "],"
             + "\"tools\":[{\"name\":\"get_weather\",\"description\":\"Get the current weather for a city\","
-            + "\"input_schema\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},"
+            + "\"inputSchema\":{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},"
             + "\"required\":[\"city\"]}}],"
+            + "\"maxTokens\":1024,"
             + "\"temperature\":0.5,"
             + "\"stream\":false"
             + "}";
 
     @Test
     @SuppressWarnings("unchecked")
-    void anthropicRequestTranslatesThroughIrIntoAValidGeminiBody() {
+    void canonicalIrRequestTranslatesIntoAValidGeminiBody() {
         JsonCodec json = new TestJsonCodec();
-        AnthropicTranslator anthropic = new AnthropicTranslator(json);
         GeminiTranslator gemini = new GeminiTranslator(json);
 
-        IrRequest ir = anthropic.decodeRequest(ANTHROPIC_WIRE);
+        IrRequest ir = IrJson.parseRequest(json, IR_REQUEST);
         String geminiWire = gemini.encodeRequest(ir);
 
         Map<String, Object> parsed = (Map<String, Object>) json.parse(geminiWire);
@@ -54,9 +53,9 @@ class CrossVendorTranslatorTest {
         assertEquals(3, contents.size());
         assertEquals("user", ((Map<String, Object>) contents.get(0)).get("role"));
         assertEquals("model", ((Map<String, Object>) contents.get(1)).get("role"),
-                "Anthropic 'assistant' must become Gemini 'model'");
+                "IR 'assistant' must become Gemini 'model'");
         assertEquals("user", ((Map<String, Object>) contents.get(2)).get("role"),
-                "Anthropic's tool_result-in-a-user-message convention stays a Gemini 'user' turn");
+                "a tool_result turn stays a Gemini 'user' turn");
 
         Map<String, Object> systemInstruction = (Map<String, Object>) parsed.get("systemInstruction");
         List<Object> systemParts = (List<Object>) systemInstruction.get("parts");
@@ -72,7 +71,7 @@ class CrossVendorTranslatorTest {
         assertEquals(0.5, ((Number) generationConfig.get("temperature")).doubleValue());
 
         // The functionCall/functionResponse pair correlates by name, exactly as antigravity-auth's
-        // AntigravityFormatBridge.anthropicToGemini pairs a tool_use id to its name up front.
+        // format-bridging logic pairs a tool_use id to its name up front.
         Map<String, Object> secondTurnPart = (Map<String, Object>) ((List<Object>) ((Map<String, Object>) contents.get(1)).get("parts")).get(0);
         Map<String, Object> functionCall = (Map<String, Object>) secondTurnPart.get("functionCall");
         assertEquals("get_weather", functionCall.get("name"));

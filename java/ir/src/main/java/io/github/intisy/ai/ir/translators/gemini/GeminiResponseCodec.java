@@ -19,8 +19,8 @@ import java.util.Set;
  * Gemini {@code generateContent} (non-streaming) response {@code Map} tree <-> {@link IrResponse}.
  *
  * <p>{@code finishReason}/{@code index} are stashed verbatim in {@link IrResponse#extensions}
- * alongside the best-effort {@link GeminiFinishReason} mapping, mirroring
- * {@code AnthropicResponseCodec}'s {@code stop_reason} handling. Tool-use precedence is honored
+ * alongside the best-effort {@link GeminiFinishReason} mapping, mirroring how other translators
+ * handle their own vendor's stop-reason field. Tool-use precedence is honored
  * exactly as antigravity-auth's {@code AntigravityStreamMapper} established it: a real Gemini
  * response that calls a function reports {@code finishReason=STOP}, so a {@link ToolUseBlock}
  * anywhere in {@code content} forces {@link io.github.intisy.ai.ir.IrStopReason#TOOL_USE}

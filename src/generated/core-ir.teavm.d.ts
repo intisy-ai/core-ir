@@ -11,10 +11,6 @@ export function irStreamEventRoundTrip(wireJson: string): string;
 
 // Non-streaming translator exports: vendor wireJson <-> core-ir's own IrRequest/IrResponse
 // JSON shape (the same shape IrJson.serialize*/parse* produce -- see src/types.ts).
-export function anthropicDecodeRequest(wireJson: string): string;
-export function anthropicEncodeRequest(irRequestJson: string): string;
-export function anthropicDecodeResponse(wireJson: string): string;
-export function anthropicEncodeResponse(irResponseJson: string): string;
 export function geminiDecodeRequest(wireJson: string): string;
 export function geminiEncodeRequest(irRequestJson: string): string;
 export function geminiDecodeResponse(wireJson: string): string;
@@ -31,7 +27,5 @@ export interface JsStreamDecoderHandle {
 export interface JsStreamEncoderHandle {
   encode(irEventJson: string): string;
 }
-export function anthropicNewStreamDecoder(): JsStreamDecoderHandle;
-export function anthropicNewStreamEncoder(): JsStreamEncoderHandle;
 export function geminiNewStreamDecoder(): JsStreamDecoderHandle;
 export function geminiNewStreamEncoder(): JsStreamEncoderHandle;

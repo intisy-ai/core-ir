@@ -8,7 +8,6 @@ import io.github.intisy.ai.ir.spi.StreamDecoder;
 import io.github.intisy.ai.ir.spi.StreamEncoder;
 import io.github.intisy.ai.ir.spi.Translator;
 import io.github.intisy.ai.ir.stream.IrStreamEvent;
-import io.github.intisy.ai.ir.translators.anthropic.AnthropicTranslator;
 import io.github.intisy.ai.ir.translators.gemini.GeminiTranslator;
 
 import org.teavm.jso.JSExport;
@@ -20,7 +19,7 @@ import java.util.List;
 
 /**
  * TeaVM JS export surface over core-ir's IR types and vendor translators (round-trip smoke
- * exports plus the {@link AnthropicTranslator}/{@link GeminiTranslator} translators). Mirrors
+ * exports plus the {@link GeminiTranslator} translator). Mirrors
  * core-proxy's {@code io.github.intisy.ai.js.CoreProxyJs} export style for non-streaming calls
  * (bare static {@code @JSExport} methods over JSON strings, no gson, no reflection) and
  * antigravity-auth's {@code AntigravityProviderJs.newStreamMapper}/{@code JsStreamMapperHandle}
@@ -71,34 +70,6 @@ public final class CoreIrJs {
     // the other.
 
     @JSExport
-    public static String anthropicDecodeRequest(String wireJson) {
-        JsonCodec json = new SimpleJsonCodec();
-        IrRequest request = new AnthropicTranslator(json).decodeRequest(wireJson);
-        return IrJson.serializeRequest(json, request);
-    }
-
-    @JSExport
-    public static String anthropicEncodeRequest(String irRequestJson) {
-        JsonCodec json = new SimpleJsonCodec();
-        IrRequest request = IrJson.parseRequest(json, irRequestJson);
-        return new AnthropicTranslator(json).encodeRequest(request);
-    }
-
-    @JSExport
-    public static String anthropicDecodeResponse(String wireJson) {
-        JsonCodec json = new SimpleJsonCodec();
-        IrResponse response = new AnthropicTranslator(json).decodeResponse(wireJson);
-        return IrJson.serializeResponse(json, response);
-    }
-
-    @JSExport
-    public static String anthropicEncodeResponse(String irResponseJson) {
-        JsonCodec json = new SimpleJsonCodec();
-        IrResponse response = IrJson.parseResponse(json, irResponseJson);
-        return new AnthropicTranslator(json).encodeResponse(response);
-    }
-
-    @JSExport
     public static String geminiDecodeRequest(String wireJson) {
         JsonCodec json = new SimpleJsonCodec();
         IrRequest request = new GeminiTranslator(json).decodeRequest(wireJson);
@@ -140,16 +111,6 @@ public final class CoreIrJs {
     /** Stateful JS handle over one {@link StreamEncoder} -- feed one IR event's JSON, get back the vendor's wire text for it. */
     public interface JsStreamEncoderHandle extends JSObject {
         JSString encode(JSString irEventJson);
-    }
-
-    @JSExport
-    public static JsStreamDecoderHandle anthropicNewStreamDecoder() {
-        return newStreamDecoderHandle(new AnthropicTranslator(new SimpleJsonCodec()));
-    }
-
-    @JSExport
-    public static JsStreamEncoderHandle anthropicNewStreamEncoder() {
-        return newStreamEncoderHandle(new AnthropicTranslator(new SimpleJsonCodec()));
     }
 
     @JSExport

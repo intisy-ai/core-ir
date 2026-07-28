@@ -8,8 +8,8 @@ export interface IrUsage {
   outputTokens?: number | null;
   cacheReadInputTokens?: number | null;
   cacheCreationInputTokens?: number | null;
-  // Gemini-only: usageMetadata.thoughtsTokenCount / totalTokenCount. Always null for Anthropic,
-  // which has no reasoning-token count and reports no derived total.
+  // Gemini-only: usageMetadata.thoughtsTokenCount / totalTokenCount. Null for vendors with no
+  // reasoning-token count that report no derived total.
   reasoningTokens?: number | null;
   totalTokens?: number | null;
 }

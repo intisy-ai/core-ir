@@ -19,7 +19,7 @@ import java.util.Set;
  * Gemini {@code Part} {@code Map} tree <-> {@link Block} hierarchy. Ported against the real Gemini
  * {@code generateContent} {@code Part} shapes confirmed by antigravity-auth's
  * {@code AntigravityFormatBridge}/{@code AntigravityStreamMapper} (the battle-tested
- * Anthropic&lt;-&gt;Gemini bridge this module reuses as its fidelity reference): {@code text},
+ * vendor-format bridge this module reuses as its fidelity reference): {@code text},
  * {@code inlineData{mimeType,data}}, {@code fileData{mimeType,fileUri}}, {@code
  * functionCall{id?,name,args}}, {@code functionResponse{id?,name,response}} and the thought-part
  * shape {@code {thought:true, text, thoughtSignature}}.
@@ -27,8 +27,8 @@ import java.util.Set;
  * <h2>tool_use / tool_result id pairing</h2>
  * A real Gemini {@code functionCall}/{@code functionResponse} {@code id} is OPTIONAL (only
  * populated for parallel function calling); Gemini otherwise pairs a response to its call by
- * {@code name}, exactly like antigravity-auth's {@code AntigravityFormatBridge.anthropicToGemini}
- * pre-maps {@code tool_use} id -&gt; name before emitting {@code functionResponse}. When a wire
+ * {@code name}, exactly like antigravity-auth's format-bridging logic pre-maps a tool-use id
+ * -&gt; name before emitting {@code functionResponse}. When a wire
  * {@code functionCall} carries no {@code id}, {@link #decodePart} synthesizes
  * {@link ToolUseBlock#id} from its {@code name} (flagged via {@link #EXT_ID_FROM_NAME} so
  * {@link #encodePart} omits the invented {@code id} on re-encode, keeping the round trip
@@ -119,7 +119,7 @@ final class GeminiBlockCodec {
             return new TextBlock((String) part.get("text"));
         }
         // An unrecognized Gemini part shape (e.g. executableCode/codeExecutionResult) -- stash it
-        // verbatim rather than throw, mirroring AnthropicBlockCodec's UnknownBlock handling: a
+        // verbatim rather than throw, mirroring how other translators handle UnknownBlock: a
         // translator ahead of a real upstream must never fail a whole response over ONE part it
         // doesn't recognize.
         UnknownBlock u = new UnknownBlock();
@@ -175,10 +175,10 @@ final class GeminiBlockCodec {
     static Map<String, Object> encodePart(JsonCodec json, Block block, Map<String, String> toolNames, Set<String> syntheticIds) {
         if (block == null) return null;
         if (block instanceof UnknownBlock) {
-            // Return the stashed raw map verbatim (mirrors AnthropicBlockCodec.encodeBlock) -- a
-            // block this codec never modeled (including one that arrived via a DIFFERENT vendor's
-            // decode, e.g. an Anthropic `document` block riding through IR into a Gemini request)
-            // must not crash the encode side either.
+            // Return the stashed raw map verbatim (mirrors how other translators encode an
+            // UnknownBlock) -- a block this codec never modeled (including one that arrived via a
+            // DIFFERENT vendor's decode, e.g. a `document` block riding through IR into a Gemini
+            // request) must not crash the encode side either.
             return new LinkedHashMap<>(((UnknownBlock) block).raw);
         }
         if (block instanceof TextBlock) {

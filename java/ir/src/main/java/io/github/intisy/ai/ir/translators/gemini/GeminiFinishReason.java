@@ -7,8 +7,8 @@ import io.github.intisy.ai.ir.IrStopReason;
  * have a clean IR analog; every other Gemini reason (e.g. {@code SAFETY}, {@code RECITATION},
  * {@code OTHER}, {@code MALFORMED_FUNCTION_CALL}) falls back to {@link IrStopReason#ERROR} going
  * in, with the exact original string preserved via the response/event {@code extensions} bag so
- * the round trip stays lossless for the same vendor (mirroring
- * {@code AnthropicStopReason}/{@code AnthropicResponseCodec}).
+ * the round trip stays lossless for the same vendor (mirroring how other translators preserve a
+ * vendor's own stop-reason string).
  *
  * <p>Gemini has no {@code finishReason} of its own for a tool call: a real Gemini response that
  * calls a function reports {@code finishReason=STOP} with a {@code functionCall} part present.

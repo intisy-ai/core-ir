@@ -24,7 +24,7 @@ import java.util.Set;
  * {@code contents[]} &lt;-&gt; {@code messages} ({@code model}/{@code user} roles; IR's
  * {@code tool} role FOLDS into a Gemini {@code user} turn on encode, matching the real API's
  * convention that a {@code functionResponse} rides in a {@code user}-role turn -- there is no
- * distinct Gemini role for it, mirroring how Anthropic embeds {@code tool_result} in a
+ * distinct Gemini role for it, mirroring how other vendors embed a tool result in a
  * {@code user} message); {@code systemInstruction} &lt;-&gt; {@code system}; {@code tools[].
  * functionDeclarations} &lt;-&gt; {@code tools}; {@code toolConfig.functionCallingConfig}
  * &lt;-&gt; {@code toolChoice}; {@code generationConfig.*} &lt;-&gt; {@code maxTokens}/
@@ -42,11 +42,12 @@ import java.util.Set;
  * Gemini pairs a {@code functionResponse} to its {@code functionCall} by {@code name} (an {@code
  * id} is only used for parallel calls); this codec pre-scans every {@link ToolUseBlock} across
  * {@code messages} into an id-&gt;name map before encoding, exactly mirroring antigravity-auth's
- * {@code AntigravityFormatBridge.anthropicToGemini} pre-pass (fallback chain
- * {@code toolNames[id] || id || "tool"}) -- the battle-tested reference this module reuses.
+ * format-bridging pre-pass (fallback chain {@code toolNames[id] || id || "tool"}) -- the
+ * battle-tested reference this module reuses.
  *
  * <h2>{@code thinkingConfig}</h2>
- * IR's {@link IrThinking} has no {@code includeThoughts} field (Anthropic has no such concept);
+ * IR's {@link IrThinking} has no {@code includeThoughts} field (most other vendors have no such
+ * concept);
  * the Gemini value round-trips via the {@code $includeThoughts} request-level extension, defaulting
  * to {@code true} when absent (matching antigravity-auth's {@code buildGemini25ThinkingConfig}
  * default). See {@link GeminiFinishReason}/{@code GeminiResponseCodec} for the response-side

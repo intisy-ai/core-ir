@@ -6,7 +6,7 @@ import java.util.Map;
  * {@code auto|any|none|{name}}. {@code type} holds one of {@link Type#AUTO}/{@link Type#ANY}/
  * {@link Type#NONE}/{@link Type#TOOL}; {@code name} is set only for {@code TOOL}.
  *
- * <p>{@code extensions} carries vendor-specific fields with no neutral home (e.g. Anthropic's
+ * <p>{@code extensions} carries vendor-specific fields with no neutral home (e.g. a vendor's own
  * {@code disable_parallel_tool_use}).
  */
 public final class IrToolChoice {

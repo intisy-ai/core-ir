@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Narrowing helpers over the {@code JsonCodec} parsed shape, mirroring
- * {@code io.github.intisy.ai.ir.translators.anthropic.AnthropicJsonUtil}. Each translator package
- * keeps its own copy rather than sharing one across vendors.
+ * Narrowing helpers over the {@code JsonCodec} parsed shape. Each translator package keeps its
+ * own copy rather than sharing one across vendors.
  */
 final class GeminiJsonUtil {
     private GeminiJsonUtil() {

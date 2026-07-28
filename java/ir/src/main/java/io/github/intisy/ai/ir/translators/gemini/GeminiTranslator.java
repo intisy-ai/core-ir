@@ -17,10 +17,10 @@ import io.github.intisy.ai.ir.spi.Translator;
  * belong to the antigravity PROVIDER, not this library.
  *
  * <p>No gson, no reflection: JSON (de)serialization goes through the injected {@link JsonCodec},
- * matching {@code AnthropicTranslator} and the rest of this module's SPI-injection pattern.
+ * matching this module's SPI-injection pattern for every translator.
  *
  * <p>The IR&lt;-&gt;Gemini mapping is ported faithfully from antigravity-auth's already
- * battle-tested Anthropic&lt;-&gt;Gemini bridge against real cloudcode-pa
+ * battle-tested vendor-format bridge against real cloudcode-pa
  * ({@code AntigravityFormatBridge}, {@code AntigravityStreamMapper}, {@code GeminiTransforms}) --
  * see {@code GeminiRequestCodec}/{@code GeminiResponseCodec}/{@code GeminiBlockCodec}'s javadoc
  * for the field-by-field mapping decisions and what deliberately stays out of scope (antigravity's

@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Golden-vector test for a streamed {@code streamGenerateContent} ({@code alt=sse}) response:
  * a {@code thought} block (with {@code thoughtSignature}) -> a {@code text} block -> a
  * {@code functionCall} -> the terminal {@code finishReason}/{@code usageMetadata} chunk. Unlike
- * Anthropic's event-typed SSE, Gemini's stream has no 1:1 frame<->event correspondence (a whole
- * {@code functionCall} collapses to a single buffered delta, and {@code content_block_start}/
+ * some other vendors' event-typed SSE, Gemini's stream has no 1:1 frame<->event correspondence (a
+ * whole {@code functionCall} collapses to a single buffered delta, and {@code content_block_start}/
  * {@code content_block_stop} are synthesized transitions with no source frame of their own), so
  * this test asserts the DECODED event sequence directly, then separately proves the round trip by
  * re-encoding the event list and decoding it again, checking the SECOND decode reaches the same
- * semantic content, since Gemini's chunks are not frame-symmetric the way Anthropic's are.
+ * semantic content, since Gemini's chunks are not frame-symmetric the way some other vendors' are.
  */
 class GeminiStreamRoundTripTest {
 

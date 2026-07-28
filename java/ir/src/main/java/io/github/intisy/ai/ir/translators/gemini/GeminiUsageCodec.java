@@ -11,8 +11,8 @@ import java.util.Map;
  * map cleanly onto {@code inputTokens}/{@code outputTokens}/{@code cacheReadInputTokens};
  * {@code thoughtsTokenCount}/{@code totalTokenCount} map onto {@link IrUsage#reasoningTokens}/
  * {@link IrUsage#totalTokens} -- fields added to the neutral IR specifically because Gemini
- * surfaces reasoning-token accounting and a derived total explicitly, where Anthropic folds
- * reasoning into {@code output_tokens} and reports no total at all.
+ * surfaces reasoning-token accounting and a derived total explicitly, where some other vendors
+ * fold reasoning into their output-token count and report no total at all.
  * {@code cacheCreationInputTokens} has no Gemini analog (Gemini's context cache is a separate
  * resource, not a per-request write count) and is always {@code null} on decode.
  */

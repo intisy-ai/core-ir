@@ -24,7 +24,7 @@ import java.util.Map;
  * Stateful encoder from canonical {@link IrStreamEvent}s back to Gemini
  * {@code streamGenerateContent} SSE frames ({@code data: <chunk>\n\n}, no {@code event:} line).
  *
- * <p>Unlike Anthropic's fine-grained event protocol, Gemini's stream carries no explicit
+ * <p>Unlike some other vendors' fine-grained event protocols, Gemini's stream carries no explicit
  * start/stop markers -- {@link MessageStartEvent}, {@link ContentBlockStartEvent} and
  * {@link MessageStopEvent} have no wire analog and emit no frame (empty string); a real Gemini
  * {@code functionCall} always arrives with its whole {@code args} in one chunk, so

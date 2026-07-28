@@ -42,33 +42,6 @@ function makeEncodeStream(handle: { encode(irEventJson: string): string }): Tran
   });
 }
 
-export const anthropicTranslator: VendorTranslator = {
-  async decodeRequest(wireJson) {
-    const mod = await loadCoreIr();
-    return JSON.parse(mod.anthropicDecodeRequest(wireJson));
-  },
-  async encodeRequest(request) {
-    const mod = await loadCoreIr();
-    return mod.anthropicEncodeRequest(JSON.stringify(request));
-  },
-  async decodeResponse(wireJson) {
-    const mod = await loadCoreIr();
-    return JSON.parse(mod.anthropicDecodeResponse(wireJson));
-  },
-  async encodeResponse(response) {
-    const mod = await loadCoreIr();
-    return mod.anthropicEncodeResponse(JSON.stringify(response));
-  },
-  async decodeStream() {
-    const mod = await loadCoreIr();
-    return makeDecodeStream(mod.anthropicNewStreamDecoder());
-  },
-  async encodeStream() {
-    const mod = await loadCoreIr();
-    return makeEncodeStream(mod.anthropicNewStreamEncoder());
-  },
-};
-
 export const geminiTranslator: VendorTranslator = {
   async decodeRequest(wireJson) {
     const mod = await loadCoreIr();
@@ -97,6 +70,5 @@ export const geminiTranslator: VendorTranslator = {
 };
 
 export const translators = {
-  anthropic: anthropicTranslator,
   gemini: geminiTranslator,
 };

@@ -4,7 +4,7 @@ import io.github.intisy.ai.ir.IrRequest;
 import io.github.intisy.ai.ir.IrResponse;
 
 /**
- * Symmetric per-vendor translator contract. Each vendor (Anthropic, Gemini, ...) implements this
+ * Symmetric per-vendor translator contract. Each vendor (Gemini, and others) implements this
  * to convert its own wire format to/from the canonical IR, for both non-streaming and streaming
  * traffic.
  *
