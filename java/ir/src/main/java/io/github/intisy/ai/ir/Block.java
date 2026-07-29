@@ -5,8 +5,8 @@ import java.util.Map;
 /**
  * Base of the content-block hierarchy: {@link TextBlock}, {@link ImageBlock},
  * {@link ToolUseBlock}, {@link ToolResultBlock}, {@link ThinkingBlock}. Chosen as the most
- * expressive superset across vendor content models (Gemini, OpenAI, and others) -- this is a
- * purpose-built neutral shape, not adopting any single vendor's shape.
+ * expressive superset across vendor content models -- this is a purpose-built neutral shape, not
+ * adopting any single vendor's shape.
  *
  * <p>{@code kind} is the JSON discriminator ({@link BlockKind}). {@code cacheControl} and
  * {@code extensions} carry vendor-specific passthrough with no neutral home (e.g. a vendor's own

@@ -4,9 +4,8 @@ import io.github.intisy.ai.ir.IrRequest;
 import io.github.intisy.ai.ir.IrResponse;
 
 /**
- * Symmetric per-vendor translator contract. Each vendor (Gemini, and others) implements this
- * to convert its own wire format to/from the canonical IR, for both non-streaming and streaming
- * traffic.
+ * Symmetric per-vendor translator contract. Each vendor implements this to convert its own wire
+ * format to/from the canonical IR, for both non-streaming and streaming traffic.
  *
  * <p>Guarantee: {@code decodeRequest(wire) -> encodeRequest} (and the response/stream
  * equivalents) reproduce a semantically-equal payload for the same vendor.

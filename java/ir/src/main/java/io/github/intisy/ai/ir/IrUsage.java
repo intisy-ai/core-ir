@@ -4,7 +4,7 @@ package io.github.intisy.ai.ir;
  * Token accounting, shared by {@link IrResponse} and streaming {@code MessageStart}/
  * {@code MessageDelta}. {@code reasoningTokens}/{@code totalTokens} are null for vendors with no
  * such concept (some vendors fold reasoning into {@code outputTokens} and report no derived total);
- * Gemini populates both from {@code usageMetadata.thoughtsTokenCount}/{@code totalTokenCount}.
+ * others populate both from their own separate reasoning/total-token usage fields.
  */
 public final class IrUsage {
     public Integer inputTokens;
