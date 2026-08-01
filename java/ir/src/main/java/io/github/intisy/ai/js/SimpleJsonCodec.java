@@ -11,8 +11,7 @@ import java.util.Map;
  * Hand-rolled {@link JsonCodec} for the TeaVM export surface: no gson/nio, just a small
  * recursive-descent parser/printer over the {@code Map}/{@code List}/{@code String}/
  * {@code Number}/{@code Boolean}/{@code null} shape. Mirrors core-proxy's
- * {@code io.github.intisy.ai.js.SimpleJsonCodec} byte-for-byte (same escaping rules), copied here
- * rather than shared so :teavm has zero dependency beyond :ir.
+ * {@code io.github.intisy.ai.js.SimpleJsonCodec} byte-for-byte (same escaping rules).
  */
 public class SimpleJsonCodec implements JsonCodec {
 
