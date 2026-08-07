@@ -1,9 +1,10 @@
 {
   "name": "core-ir",
   "version": "0.1.0",
-  "description": "Canonical vendor-neutral IR (internal representation) types for the intisy AI-tooling ecosystem, Java + TeaVM single-source",
+  "description": "Vendor-neutral canonical-IR message library for the intisy-ai AI-proxy ecosystem.",
   "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "author": "intisy",
   "repository": { "type": "git", "url": "git+https://github.com/intisy-ai/core-ir.git" },
