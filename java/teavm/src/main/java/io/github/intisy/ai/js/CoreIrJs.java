@@ -4,6 +4,7 @@ import io.github.intisy.ai.ir.IrRequest;
 import io.github.intisy.ai.ir.IrResponse;
 import io.github.intisy.ai.ir.json.IrJson;
 import io.github.intisy.ai.ir.spi.JsonCodec;
+import io.github.intisy.ai.ir.json.SimpleJsonCodec;
 import io.github.intisy.ai.ir.stream.IrStreamEvent;
 
 import org.teavm.jso.JSExport;

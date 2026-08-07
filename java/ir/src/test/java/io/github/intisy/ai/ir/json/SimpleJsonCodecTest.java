@@ -1,4 +1,4 @@
-package io.github.intisy.ai.js;
+package io.github.intisy.ai.ir.json;
 
 import org.junit.jupiter.api.Test;
 
