@@ -1,3 +1,7 @@
+plugins {
+    id "org.gradle.toolchains.foojay-resolver-convention" version "0.8.0"
+}
+
 rootProject.name = "core-ir-java"
 
 // :ir     - neutral IR types (request/response/streaming/extensions) + JSON codec SPI,
