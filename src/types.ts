@@ -195,3 +195,13 @@ export type IrStreamEvent =
   | MessageDeltaEvent
   | MessageStopEvent
   | ErrorEvent;
+
+/**
+ * A stream of canonical IR events produced directly by a provider.
+ *
+ * @remarks
+ * Hand-written rather than emitted: `ReadableStream` is a web-platform type with no Java
+ * counterpart. Vendor SSE bytes exist only at the wire boundary, encoded by a translator, so this is
+ * never a byte stream.
+ */
+export type IrEventStream = ReadableStream<IrStreamEvent>;

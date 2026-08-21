@@ -10,3 +10,16 @@ rootProject.name = "core-ir-java"
 //           emits an ES2015 module.
 include ":ir"
 include ":teavm"
+
+// :annotations, :processor and :contract come from the api submodule (../api/java from here), so
+// this repo's own contract types are emitted by the same processor as api's.
+include ":annotations"
+project(":annotations").projectDir = file("../api/java/annotations")
+include ":processor"
+project(":processor").projectDir = file("../api/java/processor")
+include ":contract"
+project(":contract").projectDir = file("../api/java/contract")
+
+// :ir-contracts - the provider capability, whose payloads ARE the IR, which is why it lives here
+// rather than in core-contracts: this is the only repo that can host it without a mirror.
+include ":ir-contracts"
