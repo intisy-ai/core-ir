@@ -14,6 +14,9 @@ public final class IrContracts {
     @TsConstant(type = "CapabilityType<ProviderCapability>", id = "provider")
     public static final Object PROVIDER = null;
 
+    @TsConstant(type = "CapabilityType<FrontDoorCapability>", id = "front-door")
+    public static final Object FRONT_DOOR = null;
+
     private IrContracts() {
     }
 }
