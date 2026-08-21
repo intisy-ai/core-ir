@@ -1,10 +1,13 @@
-// IR types + JSON codec SPI + IR<->Map(de)serialize helper. Zero-dependency by design (no
-// gson/java.net/java.nio/reflection/threads) so this module transpiles cleanly under TeaVM
-// (see ../teavm).
+// IR types + handler SPI + IR<->Map(de)serialize helper. No gson/java.net/java.nio/reflection/threads,
+// so this module transpiles cleanly under TeaVM (see ../teavm).
 plugins {
     id "java-test-fixtures"
 }
 
 dependencies {
+    // Exported rather than compileOnly because HandlerCtx's public fields ARE contract types, so
+    // every consumer that reads one needs them resolvable. They are interfaces, so nothing is linked.
+    api project(":contract")
+
     testImplementation testFixtures(project(":ir"))
 }
