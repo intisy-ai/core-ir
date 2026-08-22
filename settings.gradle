@@ -11,11 +11,11 @@ rootProject.name = "core-ir-java"
 include ":ir"
 include ":teavm"
 
-// :annotations, :processor and :contract come from the api submodule (../api/java from here), so
+// :annotations, :processor and :contract come from the api submodule (./api from here), so
 // this repo's own contract types are emitted by the same processor as api's.
 include ":annotations"
-project(":annotations").projectDir = file("../api/java/annotations")
+project(":annotations").projectDir = file("api/annotations")
 include ":processor"
-project(":processor").projectDir = file("../api/java/processor")
+project(":processor").projectDir = file("api/processor")
 include ":contract"
-project(":contract").projectDir = file("../api/java/contract")
+project(":contract").projectDir = file("api/contract")
