@@ -9,18 +9,23 @@ const repo = fileURLToPath(new URL("../..", import.meta.url));
 
 function contractFiles(dir: string): string[] {
   // src/generated also holds the TeaVM bundle, which this emission does not produce.
-  return readdirSync(dir).filter((name) => name.startsWith("ir-contracts")).sort();
+  return readdirSync(dir).filter((name) => name.startsWith("ir-")).sort();
 }
 
-it("keeps the committed provider contract identical to what the java emits", () => {
-  const scratch = mkdtempSync(join(tmpdir(), "ir-contracts-"));
+function emit(module: string, moduleDir: string, out: string): void {
   execFileSync(process.execPath, [
     join(repo, "api", "scripts", "emit-dts.mjs"),
     "--java-dir", join(repo, "java"),
-    "--module", ":ir-contracts",
-    "--module-dir", "ir-contracts",
-    "--out", scratch,
+    "--module", module,
+    "--module-dir", moduleDir,
+    "--out", out,
   ], { cwd: repo, stdio: "inherit" });
+}
+
+it("keeps the committed declarations identical to what the java emits", () => {
+  const scratch = mkdtempSync(join(tmpdir(), "ir-contracts-"));
+  emit(":ir", "ir", scratch);
+  emit(":ir-contracts", "ir-contracts", scratch);
 
   const emitted = contractFiles(scratch);
   const committed = contractFiles(join(repo, "src", "generated"));
@@ -46,14 +51,14 @@ function typeCheck(file: string): { ok: boolean; output: string } {
   }
 }
 
-it("accepts a provider written against the emitted capability", () => {
+it("accepts a handler written against the emitted seam", () => {
   const result = typeCheck("positive.ts");
   expect(result.output).toBe("");
   expect(result.ok).toBe(true);
 });
 
-it("rejects a provider whose call context is not the declared one", () => {
-  const result = typeCheck("negative-provider.ts");
+it("rejects a handler whose call context is not the declared one", () => {
+  const result = typeCheck("negative-handler.ts");
   expect(result.ok).toBe(false);
   expect(result.output).toContain("TS2322");
 });

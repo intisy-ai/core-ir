@@ -197,7 +197,7 @@ export type IrStreamEvent =
   | ErrorEvent;
 
 /**
- * A stream of canonical IR events produced directly by a provider.
+ * A stream of canonical IR events produced directly by a handler.
  *
  * @remarks
  * Hand-written rather than emitted: `ReadableStream` is a web-platform type with no Java

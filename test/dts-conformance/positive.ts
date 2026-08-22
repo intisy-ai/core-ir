@@ -1,18 +1,12 @@
-import type { CapabilityType } from "../../api/generated/api.js";
-import type { ProviderCapability, ProviderDescriptor } from "../../src/generated/ir-contracts.js";
-import { PROVIDER } from "../../src/generated/ir-contracts.keys.js";
+import type { HandlerCtx, IrHandler } from "../../src/generated/ir-spi.js";
 
-const lane: ProviderDescriptor = { id: "demo", label: "Demo", hasOAuth: false };
-
-const provider: ProviderCapability = {
+const handler: IrHandler = {
   id: "demo",
-  handleIr: async (request, context) => {
-    context.log(`serving ${context.model} on ${context.provider} from ${context.configDir}`);
-    return { id: request.model, model: request.model, role: "assistant", content: [] } as never;
+  handleIr: async (request, ctx: HandlerCtx) => {
+    ctx.log.info(`serving ${ctx.model} on ${ctx.handlerId} from ${ctx.configDir}`);
+    ctx.store?.put("last-model.json", request.model);
+    return { id: request.model, model: request.model, content: [], stopReason: "end_turn" };
   },
-  providers: () => [lane],
 };
 
-const key: CapabilityType<ProviderCapability> = PROVIDER;
-
-export const checked: [ProviderCapability, CapabilityType<ProviderCapability>] = [provider, key];
+export const checked: IrHandler = handler;
