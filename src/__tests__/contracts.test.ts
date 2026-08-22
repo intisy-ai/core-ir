@@ -12,20 +12,15 @@ function contractFiles(dir: string): string[] {
   return readdirSync(dir).filter((name) => name.startsWith("ir-")).sort();
 }
 
-function emit(module: string, moduleDir: string, out: string): void {
+it("keeps the committed declarations identical to what the java emits", () => {
+  const scratch = mkdtempSync(join(tmpdir(), "ir-spi-"));
   execFileSync(process.execPath, [
     join(repo, "api", "scripts", "emit-dts.mjs"),
     "--java-dir", join(repo, "java"),
-    "--module", module,
-    "--module-dir", moduleDir,
-    "--out", out,
+    "--module", ":ir",
+    "--module-dir", "ir",
+    "--out", scratch,
   ], { cwd: repo, stdio: "inherit" });
-}
-
-it("keeps the committed declarations identical to what the java emits", () => {
-  const scratch = mkdtempSync(join(tmpdir(), "ir-contracts-"));
-  emit(":ir", "ir", scratch);
-  emit(":ir-contracts", "ir-contracts", scratch);
 
   const emitted = contractFiles(scratch);
   const committed = contractFiles(join(repo, "src", "generated"));

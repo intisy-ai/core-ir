@@ -17,5 +17,4 @@ export function loadCoreIr(): Promise<typeof import("./generated/core-ir.teavm.j
 export * from "./translators.js";
 export * from "./types.js";
 export * from "./vendor-bridge.js";
-export * from "./generated/ir-contracts.keys.js";
 export type * from "./generated/ir-spi.js";

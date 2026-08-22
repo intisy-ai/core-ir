@@ -19,7 +19,3 @@ include ":processor"
 project(":processor").projectDir = file("../api/java/processor")
 include ":contract"
 project(":contract").projectDir = file("../api/java/contract")
-
-// :ir-contracts - the front-door capability key, whose payloads ARE the IR. It stays here only until
-// core-proxy, which owns the front door, can mint it.
-include ":ir-contracts"

@@ -31,7 +31,7 @@
     "build": "npm run build:teavm && tsc && node build.mjs",
     "test": "vitest run",
     "prepublishOnly": "npm run build",
-    "emit": "node api/scripts/emit-dts.mjs --java-dir java --module :ir --module-dir ir --out src/generated && node api/scripts/emit-dts.mjs --java-dir java --module :ir-contracts --module-dir ir-contracts --out src/generated"
+    "emit": "node api/scripts/emit-dts.mjs --java-dir java --module :ir --module-dir ir --out src/generated"
   },
   "devDependencies": {
     "typescript": "^5.6.0",
