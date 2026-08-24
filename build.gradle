@@ -69,6 +69,12 @@ configure(subprojects.findAll { PUBLISHED_MODULES.containsKey(it.path) }) {
         archiveVersion = ""
     }
 
+    // Declaring the artifact does not build it, and CI publishes with `:<module>:jar
+    // :<module>:publishGithub`, which reaches no other jar task.
+    tasks.matching { it.name == "publishGithub" }.configureEach {
+        dependsOn tasks.matching { it.name == "testFixturesJar" }
+    }
+
     publishGithub {
         // These modules sit inside this repo with no .git of their own, so the default git-remote
         // lookup fails; owner/repo also drive the uploaded asset name (core-ir-<classifier>.jar).
