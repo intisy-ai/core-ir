@@ -1,5 +1,5 @@
 plugins {
-    id "io.github.intisy.github-gradle" version "1.8.2.1" apply false
+    id "io.github.intisy.github-gradle" version "1.10.2" apply false
 }
 
 // core-ir's Java module -- self-contained Gradle build living alongside core-ir's TS (../src,
@@ -62,6 +62,13 @@ configure(subprojects.findAll { PUBLISHED_MODULES.containsKey(it.path) }) {
         archiveVersion = ""
     }
 
+    // The test fixtures are consumed by every vendor translator's own tests, so they are published
+    // alongside the module rather than duplicated per translator. Unversioned for the same reason
+    // the main jar is: the release asset's name is the coordinate consumers write.
+    tasks.matching { it.name == "testFixturesJar" }.configureEach {
+        archiveVersion = ""
+    }
+
     publishGithub {
         // These modules sit inside this repo with no .git of their own, so the default git-remote
         // lookup fails; owner/repo also drive the uploaded asset name (core-ir-<classifier>.jar).
@@ -72,6 +79,10 @@ configure(subprojects.findAll { PUBLISHED_MODULES.containsKey(it.path) }) {
             artifact {
                 classifier = PUBLISHED_MODULES[project.path]
                 jar = file("build/libs/${project.name}.jar")
+            }
+            artifact {
+                classifier = "${PUBLISHED_MODULES[project.path]}-test-fixtures"
+                jar = file("build/libs/${project.name}-test-fixtures.jar")
             }
         }
     }
