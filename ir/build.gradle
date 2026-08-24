@@ -1,0 +1,25 @@
+// IR types + handler SPI + IR<->Map(de)serialize helper. No gson/java.net/java.nio/reflection/threads,
+// so this module transpiles cleanly under TeaVM (see ../teavm).
+plugins {
+    id "java-test-fixtures"
+}
+
+dependencies {
+    // Exported rather than compileOnly because HandlerCtx's public fields ARE contract types, so
+    // every consumer that reads one needs them resolvable. They are interfaces, so nothing is linked.
+    api project(":contract")
+
+    // SOURCE-retention, so the jar carries neither the annotations nor the processor.
+    compileOnly project(":annotations")
+    annotationProcessor project(":processor")
+
+    testImplementation testFixtures(project(":ir"))
+}
+
+tasks.named("compileJava") {
+    options.compilerArgs += [
+        "-Atsemit.name=ir-spi",
+        "-Atsemit.ext=.ts",
+        "-Atsemit.imports=../types.js=IrRequest,IrResponse,IrEventStream;@intisy-ai/api/contract=Logger,Store",
+    ]
+}

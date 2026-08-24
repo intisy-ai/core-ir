@@ -1,0 +1,21 @@
+plugins {
+    id "org.gradle.toolchains.foojay-resolver-convention" version "0.8.0"
+}
+
+rootProject.name = "core-ir-java"
+
+// :ir     - neutral IR types (request/response/streaming/extensions) + JSON codec SPI,
+//           transpilable Java 8, no gson/net/nio/reflect/threads.
+// :teavm  - TeaVM JS export surface over :ir (SimpleJsonCodec, IrJs) -> generateJavaScript
+//           emits an ES2015 module.
+include ":ir"
+include ":teavm"
+
+// :annotations, :processor and :contract come from the api submodule (./api from here), so
+// this repo's own contract types are emitted by the same processor as api's.
+include ":annotations"
+project(":annotations").projectDir = file("api/annotations")
+include ":processor"
+project(":processor").projectDir = file("api/processor")
+include ":contract"
+project(":contract").projectDir = file("api/contract")
