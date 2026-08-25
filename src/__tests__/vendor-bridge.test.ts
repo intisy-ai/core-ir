@@ -113,4 +113,21 @@ describe("makeVendorTranslator", () => {
     await encodeWriter.close();
     expect(await frames).toEqual(["wire:text_delta"]);
   });
+
+  it("exposes the loaded module's own string handles, the same ones the typed members wrap", async () => {
+    const handles = await translator.handles();
+
+    // Synchronous, unlike every typed member: a Java host cannot await per call.
+    expect(handles.decodeRequest('{"model":"m"}')).toBe('{"model":"m"}');
+    expect(handles.encodeResponse('{"model":"m"}')).toBe('{"model":"m"}');
+
+    // A fresh stream handle per call, because a real encoder is stateful per connection.
+    const first = handles.newStreamEncoder();
+    const second = handles.newStreamEncoder();
+    expect(first).not.toBe(second);
+    expect(first.encode(JSON.stringify({ event: "text_delta" }))).toBe("wire:text_delta");
+    expect(handles.newStreamDecoder().decode("hi")).toBe(
+      JSON.stringify([{ event: "text_delta", index: 0, text: "hi" }]),
+    );
+  });
 });

@@ -4,7 +4,7 @@
 // naming; each *-translator repo supplies that at its own call site.
 
 import type { IrRequest, IrResponse, IrStreamEvent } from "./types.js";
-import type { VendorTranslator } from "./translators.js";
+import type { VendorHandles, VendorTranslator, WithVendorHandles } from "./translators.js";
 
 export function makeDecodeStream(handle: { decode(chunk: string): string }): TransformStream<Uint8Array | string, IrStreamEvent> {
   const textDecoder = new TextDecoder();
@@ -36,7 +36,7 @@ export interface VendorTranslatorApi<Mod> {
   newStreamEncoder(mod: Mod): () => { encode(irEventJson: string): string };
 }
 
-export function makeVendorTranslator<Mod>(load: () => Promise<Mod>, api: VendorTranslatorApi<Mod>): VendorTranslator {
+export function makeVendorTranslator<Mod>(load: () => Promise<Mod>, api: VendorTranslatorApi<Mod>): VendorTranslator & WithVendorHandles {
   return {
     async decodeRequest(wireJson: string): Promise<IrRequest> {
       const mod = await load();
@@ -61,6 +61,17 @@ export function makeVendorTranslator<Mod>(load: () => Promise<Mod>, api: VendorT
     async encodeStream() {
       const mod = await load();
       return makeEncodeStream(api.newStreamEncoder(mod)());
+    },
+    async handles(): Promise<VendorHandles> {
+      const mod = await load();
+      return {
+        decodeRequest: api.decodeRequest(mod),
+        encodeRequest: api.encodeRequest(mod),
+        decodeResponse: api.decodeResponse(mod),
+        encodeResponse: api.encodeResponse(mod),
+        newStreamDecoder: api.newStreamDecoder(mod),
+        newStreamEncoder: api.newStreamEncoder(mod),
+      };
     },
   };
 }
