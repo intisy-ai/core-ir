@@ -1,6 +1,6 @@
 {
   "name": "core-ir",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Vendor-neutral canonical-IR message library for the intisy-ai AI-proxy ecosystem.",
   "type": "module",
   "main": "dist/index.js",
@@ -34,12 +34,12 @@
     "emit": "node node_modules/@intisy-ai/api/scripts/emit-dts.mjs --java-dir . --module :ir --module-dir ir --out src/generated"
   },
   "dependencies": {
-    "@intisy-ai/api": "^1.0.1"
+    "@intisy-ai/api": "^1.0.2"
   },
   "devDependencies": {
-    "typescript": "^5.6.0",
-    "vitest": "^2.1.0",
     "@types/node": "^22.0.0",
-    "esbuild": "^0.21.5"
+    "esbuild": "^0.21.5",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
   }
 }

@@ -15,7 +15,7 @@ function contractFiles(dir: string): string[] {
 it("keeps the committed declarations identical to what the java emits", () => {
   const scratch = mkdtempSync(join(tmpdir(), "ir-spi-"));
   execFileSync(process.execPath, [
-    join(repo, "api", "scripts", "emit-dts.mjs"),
+    join(repo, "node_modules", "@intisy-ai", "api", "scripts", "emit-dts.mjs"),
     "--java-dir", repo,
     "--module", ":ir",
     "--module-dir", "ir",
