@@ -9,6 +9,7 @@ rootProject.name = "core-ir-java"
 // :teavm  - TeaVM JS export surface over :ir (SimpleJsonCodec, IrJs) -> generateJavaScript
 //           emits an ES2015 module.
 include ":ir"
+include ":js-base"
 include ":teavm"
 
 // :annotations, :processor and :contract are api's published jars, resolved by github-gradle from

@@ -1,4 +1,4 @@
 {
   "scopedOnly": true,
-  "jarModule": "ir"
+  "jarModule": "ir js-base"
 }

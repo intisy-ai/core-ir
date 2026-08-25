@@ -55,7 +55,12 @@ subprojects {
 // shading would put every module on every consumer's classpath.
 ext.PUBLISHED_MODULES = [
     ":ir": "ir",
+    ":js-base": "js-base",
 ]
+
+// Only :ir ships test fixtures; every vendor translator's tests consume them. :js-base has none, and
+// declaring an artifact whose file is never built fails the publish.
+ext.FIXTURE_MODULES = [":ir"]
 
 configure(subprojects.findAll { PUBLISHED_MODULES.containsKey(it.path) }) {
     jar {
@@ -65,14 +70,18 @@ configure(subprojects.findAll { PUBLISHED_MODULES.containsKey(it.path) }) {
     // The test fixtures are consumed by every vendor translator's own tests, so they are published
     // alongside the module rather than duplicated per translator. Unversioned for the same reason
     // the main jar is: the release asset's name is the coordinate consumers write.
-    tasks.matching { it.name == "testFixturesJar" }.configureEach {
-        archiveVersion = ""
+    if (project.path in rootProject.FIXTURE_MODULES) {
+        tasks.matching { it.name == "testFixturesJar" }.configureEach {
+            archiveVersion = ""
+        }
     }
 
     // Declaring the artifact does not build it, and CI publishes with `:<module>:jar
     // :<module>:publishGithub`, which reaches no other jar task.
-    tasks.matching { it.name == "publishGithub" }.configureEach {
-        dependsOn tasks.matching { it.name == "testFixturesJar" }
+    if (project.path in rootProject.FIXTURE_MODULES) {
+        tasks.matching { it.name == "publishGithub" }.configureEach {
+            dependsOn tasks.matching { it.name == "testFixturesJar" }
+        }
     }
 
     publishGithub {
@@ -86,9 +95,11 @@ configure(subprojects.findAll { PUBLISHED_MODULES.containsKey(it.path) }) {
                 classifier = PUBLISHED_MODULES[project.path]
                 jar = file("build/libs/${project.name}.jar")
             }
-            artifact {
-                classifier = "${PUBLISHED_MODULES[project.path]}-test-fixtures"
-                jar = file("build/libs/${project.name}-test-fixtures.jar")
+            if (project.path in rootProject.FIXTURE_MODULES) {
+                artifact {
+                    classifier = "${PUBLISHED_MODULES[project.path]}-test-fixtures"
+                    jar = file("build/libs/${project.name}-test-fixtures.jar")
+                }
             }
         }
     }

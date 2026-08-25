@@ -14,8 +14,10 @@ public interface IrEventSource {
     /**
      * The next event, or {@code null} once the stream is complete.
      *
-     * @throws RuntimeException when the underlying stream fails. A failure is terminal: the source
-     * must not be pulled again afterwards.
+     * @throws Exception when the underlying stream fails. A failure is terminal: the source must not
+     * be pulled again afterwards. Declared broadly on purpose, so a modeled transport outcome such as
+     * {@code HandleIrException} can surface from the FIRST pull, which is the only point at which a
+     * caller walking a fallback chain can still act on it.
      */
-    IrStreamEvent next();
+    IrStreamEvent next() throws Exception;
 }
