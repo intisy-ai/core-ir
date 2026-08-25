@@ -1,11 +1,8 @@
-# core-ir
-
 Canonical, vendor-neutral IR (internal representation) for the intisy AI-tooling
 ecosystem. A genuine neutral schema, Java + TeaVM single-source, so the exact
 same types compile to a JVM jar (for ai-java / the JVM router) **and** to a JS
 module (for TS front-doors and providers) -- no duplicated TS reimplementation
 of decisions that already live in Java.
-
 core-ir ships zero vendor translators. Every vendor translator (Anthropic,
 Gemini, OpenAI, and so on) lives in its own `*-translator` repo, which depends
 on this one and re-exports its IR surface (`VendorTranslator`,
@@ -107,7 +104,3 @@ neutral IR round trips only; vendor translator tests live in their own
 TS: `npm run build && npx vitest run` (`build` stages the TeaVM JS, `tsc`s,
 then bundles with esbuild; `test` round-trips the neutral IR types through
 the TeaVM module).
-
-## License
-
-MIT
