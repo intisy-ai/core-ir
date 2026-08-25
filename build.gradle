@@ -1,5 +1,5 @@
 plugins {
-    id "io.github.intisy.github-gradle" version "1.10.2" apply false
+    id "io.github.intisy.github-gradle" version "1.10.3" apply false
 }
 
 // core-ir's Java module -- self-contained Gradle build living alongside core-ir's TS (../src,
