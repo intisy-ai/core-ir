@@ -7,8 +7,8 @@ module (for TS front-doors and providers) -- no duplicated TS reimplementation
 of decisions that already live in Java.
 
 core-ir ships zero vendor translators. Every vendor translator (Anthropic,
-Gemini, OpenAI, and so on) lives in its own `*-translator` repo, which nests
-this repo as a submodule and re-exports its IR surface (`VendorTranslator`,
+Gemini, OpenAI, and so on) lives in its own `*-translator` repo, which depends
+on this one and re-exports its IR surface (`VendorTranslator`,
 `StreamTranslator`) alongside its own translator implementing
 `io.github.intisy.ai.ir.spi.Translator`.
 
@@ -21,7 +21,7 @@ flowchart LR
   GEN -->|teavm-build.mjs stage| STAGED[src/generated/core-ir.teavm.js]
   STAGED -->|tsc + esbuild| DIST[dist/index.js]
   DIST --> API["src/translators.ts: VendorTranslator/StreamTranslator"]
-  DIST -.->|nested submodule| VT["*-translator repos (own Translator impl)"]
+  DIST -.->|npm dependency| VT["*-translator repos (own Translator impl)"]
 ```
 
 ## Structure
