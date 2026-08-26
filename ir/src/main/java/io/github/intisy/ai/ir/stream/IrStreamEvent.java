@@ -15,9 +15,14 @@ import java.util.Map;
  * trip stays semantically lossless.
  */
 public abstract class IrStreamEvent {
+    /** The JSON discriminator, one of the {@link IrEventType} constants. */
     public String event;
+    /** Vendor-specific passthrough with no neutral home, or null when none applies. */
     public Map<String, Object> extensions;
 
+    /**
+     * @param event the JSON discriminator, one of the {@link IrEventType} constants.
+     */
     protected IrStreamEvent(String event) {
         this.event = event;
     }
