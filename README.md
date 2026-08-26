@@ -1,14 +1,18 @@
 # core-ir
 
+[![npm version](https://img.shields.io/npm/v/core-ir)](https://www.npmjs.com/package/core-ir)
+[![npm downloads](https://img.shields.io/npm/dm/core-ir)](https://www.npmjs.com/package/core-ir)
+
+Vendor-neutral canonical-IR message library for the intisy-ai AI-proxy ecosystem.
+
 Canonical, vendor-neutral IR (internal representation) for the intisy AI-tooling
 ecosystem. A genuine neutral schema, Java + TeaVM single-source, so the exact
 same types compile to a JVM jar (for ai-java / the JVM router) **and** to a JS
 module (for TS front-doors and providers) -- no duplicated TS reimplementation
 of decisions that already live in Java.
-
 core-ir ships zero vendor translators. Every vendor translator (Anthropic,
-Gemini, OpenAI, and so on) lives in its own `*-translator` repo, which nests
-this repo as a submodule and re-exports its IR surface (`VendorTranslator`,
+Gemini, OpenAI, and so on) lives in its own `*-translator` repo, which depends
+on this one and re-exports its IR surface (`VendorTranslator`,
 `StreamTranslator`) alongside its own translator implementing
 `io.github.intisy.ai.ir.spi.Translator`.
 
@@ -21,7 +25,7 @@ flowchart LR
   GEN -->|teavm-build.mjs stage| STAGED[src/generated/core-ir.teavm.js]
   STAGED -->|tsc + esbuild| DIST[dist/index.js]
   DIST --> API["src/translators.ts: VendorTranslator/StreamTranslator"]
-  DIST -.->|nested submodule| VT["*-translator repos (own Translator impl)"]
+  DIST -.->|npm dependency| VT["*-translator repos (own Translator impl)"]
 ```
 
 ## Structure
@@ -110,4 +114,4 @@ the TeaVM module).
 
 ## License
 
-MIT
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
