@@ -16,6 +16,9 @@ export interface IrHandler {
   /**
    * Serves an already-decoded request.
    *
+   * @param request - the request to serve.
+   * @param ctx - the per-call context this handler was invoked with.
+   * @returns the completed response.
    * @throws HandleIrException for a non-2xx upstream outcome, so the caller can rebuild the
    * response it describes. Any other throw is an unexpected failure.
    */

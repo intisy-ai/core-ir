@@ -16,13 +16,20 @@ import io.github.intisy.ai.tsemit.TsUnion;
  */
 @TsInterface
 public interface IrHandler {
-    /** The id a routing chain names to reach this handler. */
+    /**
+     * The id a routing chain names to reach this handler.
+     *
+     * @return the id a routing chain names to reach this handler.
+     */
     @TsProperty(readOnly = true)
     String id();
 
     /**
      * Serves an already-decoded request.
      *
+     * @param request the request to serve.
+     * @param ctx the per-call context this handler was invoked with.
+     * @return the completed response.
      * @throws HandleIrException for a non-2xx upstream outcome, so the caller can rebuild the
      * response it describes. Any other throw is an unexpected failure.
      */
