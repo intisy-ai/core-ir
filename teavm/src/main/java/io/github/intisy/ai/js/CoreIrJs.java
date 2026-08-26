@@ -23,6 +23,9 @@ public final class CoreIrJs {
     /**
      * Bare parse+stringify round trip through {@link SimpleJsonCodec}, with no IR type involved --
      * proves the JSON codec itself is wired through TeaVM correctly.
+     *
+     * @param json the JSON text to round-trip.
+     * @return the same value, re-serialized.
      */
     @JSExport
     public static String jsonRoundTrip(String json) {
@@ -30,7 +33,12 @@ public final class CoreIrJs {
         return codec.stringify(codec.parse(json));
     }
 
-    /** {@code wireJson -> IrRequest -> wireJson}, proving the IR request (de)serialize helper through TeaVM. */
+    /**
+     * {@code wireJson -> IrRequest -> wireJson}, proving the IR request (de)serialize helper through TeaVM.
+     *
+     * @param wireJson the request's JSON text.
+     * @return the same request, re-serialized.
+     */
     @JSExport
     public static String irRequestRoundTrip(String wireJson) {
         JsonCodec json = new SimpleJsonCodec();
@@ -38,7 +46,12 @@ public final class CoreIrJs {
         return IrJson.serializeRequest(json, request);
     }
 
-    /** {@code wireJson -> IrResponse -> wireJson}. */
+    /**
+     * {@code wireJson -> IrResponse -> wireJson}.
+     *
+     * @param wireJson the response's JSON text.
+     * @return the same response, re-serialized.
+     */
     @JSExport
     public static String irResponseRoundTrip(String wireJson) {
         JsonCodec json = new SimpleJsonCodec();
@@ -46,7 +59,12 @@ public final class CoreIrJs {
         return IrJson.serializeResponse(json, response);
     }
 
-    /** {@code wireJson -> IrStreamEvent -> wireJson}. */
+    /**
+     * {@code wireJson -> IrStreamEvent -> wireJson}.
+     *
+     * @param wireJson the stream event's JSON text.
+     * @return the same event, re-serialized.
+     */
     @JSExport
     public static String irStreamEventRoundTrip(String wireJson) {
         JsonCodec json = new SimpleJsonCodec();

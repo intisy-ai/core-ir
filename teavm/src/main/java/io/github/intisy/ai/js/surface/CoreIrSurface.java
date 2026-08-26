@@ -14,15 +14,35 @@ import io.github.intisy.ai.tsemit.TsModule;
 @TsModule
 public interface CoreIrSurface {
 
-    /** Parse and stringify with no IR type involved, proving the JSON codec crosses TeaVM. */
+    /**
+     * Parse and stringify with no IR type involved, proving the JSON codec crosses TeaVM.
+     *
+     * @param json the JSON text to round-trip.
+     * @return the same value, re-serialized.
+     */
     String jsonRoundTrip(String json);
 
-    /** Wire JSON to an IR request and back, proving the request helper crosses TeaVM. */
+    /**
+     * Wire JSON to an IR request and back, proving the request helper crosses TeaVM.
+     *
+     * @param wireJson the request's JSON text.
+     * @return the same request, re-serialized.
+     */
     String irRequestRoundTrip(String wireJson);
 
-    /** Wire JSON to an IR response and back. */
+    /**
+     * Wire JSON to an IR response and back.
+     *
+     * @param wireJson the response's JSON text.
+     * @return the same response, re-serialized.
+     */
     String irResponseRoundTrip(String wireJson);
 
-    /** Wire JSON to an IR stream event and back. */
+    /**
+     * Wire JSON to an IR stream event and back.
+     *
+     * @param wireJson the stream event's JSON text.
+     * @return the same event, re-serialized.
+     */
     String irStreamEventRoundTrip(String wireJson);
 }

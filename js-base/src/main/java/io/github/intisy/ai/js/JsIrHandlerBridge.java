@@ -34,6 +34,12 @@ public final class JsIrHandlerBridge implements IrStreamHandler {
 
     /** A JS pull source over one streamed response: resolves the next IR event as JSON, or null. */
     public interface JsIrEvents extends JSObject {
+        /**
+         * Called from Java to pull the next event; JS implements it.
+         *
+         * @return a promise resolving the next event's IR JSON text, or null/undefined once the
+         * stream is exhausted.
+         */
         JSPromise<JSString> next();
     }
 
@@ -46,8 +52,23 @@ public final class JsIrHandlerBridge implements IrStreamHandler {
      * because a provider is bundled independently, so class identity never survives the boundary.
      */
     public interface JsIrHandler extends JSObject {
+        /**
+         * Called from Java with the request and call context, each as JSON text; JS implements it.
+         *
+         * @param irRequestJson the request, as IR JSON text.
+         * @param ctxJson the call context, as JSON text.
+         * @return a promise resolving the response's IR JSON text, or rejecting.
+         */
         JSPromise<JSString> handleIr(JSString irRequestJson, JSString ctxJson);
 
+        /**
+         * Called from Java with the request and call context, each as JSON text; JS implements it.
+         *
+         * @param irRequestJson the request, as IR JSON text.
+         * @param ctxJson the call context, as JSON text.
+         * @return a pull source over the streamed response, or undefined when this handler has no
+         * streamed entry point.
+         */
         JsIrEvents handleIrStream(JSString irRequestJson, JSString ctxJson);
     }
 
@@ -55,13 +76,23 @@ public final class JsIrHandlerBridge implements IrStreamHandler {
     private final JsIrHandler jsHandler;
     private final JsonCodec json;
 
+    /**
+     * @param id the id this bridge answers to.
+     * @param jsHandler the JS-provided handler this bridge delegates to.
+     * @param json the codec used to (de)serialize IR types crossing the JS boundary.
+     */
     public JsIrHandlerBridge(String id, JsIrHandler jsHandler, JsonCodec json) {
         this.id = id;
         this.jsHandler = jsHandler;
         this.json = json;
     }
 
-    /** Whether the JS handler offers a streamed entry point at all. */
+    /**
+     * Whether the JS handler offers a streamed entry point at all.
+     *
+     * @return true when the JS handler exposes {@code handleIrStream}, false when it is
+     * buffered-only.
+     */
     public boolean canStream() {
         return !JSObjects.isUndefined(streamFn());
     }
