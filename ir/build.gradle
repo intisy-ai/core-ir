@@ -7,14 +7,14 @@ plugins {
 dependencies {
     // Exported rather than compileOnly because HandlerCtx's public fields ARE contract types, so
     // every consumer that reads one needs them resolvable. They are interfaces, so nothing is linked.
-    githubApi "intisy-ai:api:1.2.0:contract"
+    githubApi "intisy-ai:api:1.3.0:contract"
 
     // SOURCE-retention, so the jar carries neither the annotations nor the processor.
-    githubCompileOnly "intisy-ai:api:1.2.0:annotations"
+    githubCompileOnly "intisy-ai:api:1.3.0:annotations"
     // The processor jar is a release asset and so carries no transitive metadata: it needs the
     // annotation types it reads named here too, alongside the compile classpath's own copy.
-    githubAnnotationProcessor "intisy-ai:api:1.2.0:processor"
-    githubAnnotationProcessor "intisy-ai:api:1.2.0:annotations"
+    githubAnnotationProcessor "intisy-ai:api:1.3.0:processor"
+    githubAnnotationProcessor "intisy-ai:api:1.3.0:annotations"
 
     testImplementation testFixtures(project(":ir"))
 }
