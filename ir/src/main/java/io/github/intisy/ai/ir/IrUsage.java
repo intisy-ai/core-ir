@@ -7,16 +7,29 @@ package io.github.intisy.ai.ir;
  * others populate both from their own separate reasoning/total-token usage fields.
  */
 public final class IrUsage {
+    /** Tokens in the request's input, or null when the vendor does not report it. */
     public Integer inputTokens;
+    /** Tokens the model generated, or null when the vendor does not report it. */
     public Integer outputTokens;
+    /** Input tokens served from a prompt cache, or null when the vendor does not report it. */
     public Integer cacheReadInputTokens;
+    /** Input tokens written to a prompt cache, or null when the vendor does not report it. */
     public Integer cacheCreationInputTokens;
+    /** Tokens spent on reasoning, or null for vendors with no such concept. */
     public Integer reasoningTokens;
+    /** The vendor's own reported token total, or null for vendors that report none. */
     public Integer totalTokens;
 
+    /** Creates a usage record with no fields set yet. */
     public IrUsage() {
     }
 
+    /**
+     * @param inputTokens tokens in the request's input, or null when the vendor does not report it.
+     * @param outputTokens tokens the model generated, or null when the vendor does not report it.
+     * @param cacheReadInputTokens input tokens served from a prompt cache, or null when the vendor does not report it.
+     * @param cacheCreationInputTokens input tokens written to a prompt cache, or null when the vendor does not report it.
+     */
     public IrUsage(Integer inputTokens, Integer outputTokens, Integer cacheReadInputTokens, Integer cacheCreationInputTokens) {
         this.inputTokens = inputTokens;
         this.outputTokens = outputTokens;

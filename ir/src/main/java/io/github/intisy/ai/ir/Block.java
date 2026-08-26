@@ -14,10 +14,16 @@ import java.util.Map;
  * stays semantically lossless.
  */
 public abstract class Block {
+    /** The JSON discriminator identifying the concrete subclass; one of the {@link BlockKind} constants. */
     public String kind;
+    /** Vendor-specific cache-control hint carried verbatim, or null when the vendor sets none. */
     public String cacheControl;
+    /** Vendor-specific fields with no neutral equivalent, or null when none apply. */
     public Map<String, Object> extensions;
 
+    /**
+     * @param kind the {@link BlockKind} constant a concrete subclass fixes itself to.
+     */
     protected Block(String kind) {
         this.kind = kind;
     }

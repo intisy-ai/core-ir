@@ -5,13 +5,21 @@ import java.util.Map;
 
 /** One turn in {@link IrRequest#messages}. {@code role} is {@code user|assistant|tool}. */
 public final class IrMessage {
+    /** Who sent the message: {@code user}, {@code assistant}, or {@code tool}. */
     public String role;
+    /** The message's content blocks, in order. */
     public List<Block> content;
+    /** Vendor-specific fields with no neutral equivalent, or null when none apply. */
     public Map<String, Object> extensions;
 
+    /** Creates a message with no role or content set yet. */
     public IrMessage() {
     }
 
+    /**
+     * @param role the sender: {@code user}, {@code assistant}, or {@code tool}.
+     * @param content the message's content blocks, in order.
+     */
     public IrMessage(String role, List<Block> content) {
         this.role = role;
         this.content = content;

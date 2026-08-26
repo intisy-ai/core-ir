@@ -11,8 +11,10 @@ import java.util.Map;
  * Block#extensions}, just for a whole block instead of one unknown field.
  */
 public final class UnknownBlock extends Block {
+    /** The entire original wire block, preserved verbatim so a translator can re-emit it unchanged. */
     public Map<String, Object> raw;
 
+    /** Creates an empty unknown block; the caller sets {@link #raw}. */
     public UnknownBlock() {
         super(BlockKind.UNKNOWN);
     }
