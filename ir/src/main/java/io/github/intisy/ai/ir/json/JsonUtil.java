@@ -6,8 +6,8 @@ import java.util.Map;
 /**
  * Narrowing helpers over the {@code JsonCodec} parsed shape ({@code Map}/{@code List}/
  * {@code String}/{@code Number}/{@code Boolean}/{@code null}). No reflection, no gson: every
- * conversion in this package hand-rolls its {@code Map<String,Object>} <-> POJO mapping through
- * these helpers so the code stays transpilable.
+ * conversion in this package hand-rolls the mapping between {@code Map<String,Object>} and POJOs
+ * through these helpers so the code stays transpilable.
  */
 public final class JsonUtil {
     private JsonUtil() {

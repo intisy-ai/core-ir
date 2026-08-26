@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Public (de)serialize surface for the IR types, over an injected {@link JsonCodec} (no gson, no
  * reflection -- same SPI-injection pattern as core-proxy's {@code Router}). Every IR type hand-
- * rolls its {@code Map<String,Object>} <-> POJO conversion (see the package-private
+ * rolls the conversion between {@code Map<String,Object>} and POJOs (see the package-private
  * {@code *Json} helpers), so this stays TeaVM-transpilable.
  */
 public final class IrJson {
