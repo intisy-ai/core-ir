@@ -60,8 +60,7 @@ subprojects {
         failOnError = true
     }
 
-    // check does not depend on javadoc by default, so a doclint finding stayed invisible to CI
-    // and to `./gradlew check` alike until this line made it part of the gate.
+    // check does not run javadoc by default, so without this a doclint finding fails no build.
     tasks.named("check") { dependsOn tasks.named("javadoc") }
 
     dependencies {
