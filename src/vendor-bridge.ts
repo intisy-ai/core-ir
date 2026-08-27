@@ -3,10 +3,25 @@
 // from a module loader plus the six generated (de)serialize functions. Contains no vendor-specific
 // naming; each *-translator repo supplies that at its own call site.
 
-import type { IrRequest, IrResponse, IrStreamEvent } from "./types.js";
-import type { VendorHandles, VendorTranslator, WithVendorHandles } from "./translators.js";
+import type { IrRequest, IrResponse, IrStreamEvent } from "./generated/ir.js";
+import type {
+  StreamDecodeHandle,
+  StreamEncodeHandle,
+  VendorHandles,
+  VendorTranslator,
+  WithVendorHandles,
+} from "./translators.js";
 
-export function makeDecodeStream(handle: { decode(chunk: string): string }): TransformStream<Uint8Array | string, IrStreamEvent> {
+/**
+ * Wraps a stateful vendor decode handle as a stream of canonical IR events.
+ *
+ * @param handle the vendor's decoder, which returns a JSON array of the events one chunk completed.
+ * @returns a transform from vendor SSE bytes or text to IR events, one enqueue per event.
+ * @remarks
+ * The handle is stateful because a vendor chunk boundary need not be an event boundary, so it holds
+ * the partial tail between calls and a caller must not share one handle between two streams.
+ */
+export function makeDecodeStream(handle: StreamDecodeHandle): TransformStream<Uint8Array | string, IrStreamEvent> {
   const textDecoder = new TextDecoder();
   return new TransformStream({
     transform(chunk, controller) {
@@ -17,7 +32,17 @@ export function makeDecodeStream(handle: { decode(chunk: string): string }): Tra
   });
 }
 
-export function makeEncodeStream(handle: { encode(irEventJson: string): string }): TransformStream<IrStreamEvent, string> {
+/**
+ * Wraps a stateful vendor encode handle as a stream of that vendor's wire text.
+ *
+ * @param handle the vendor's encoder, which returns the wire text one IR event produces.
+ * @returns a transform from IR events to vendor wire text.
+ * @remarks
+ * An event that the vendor's format has no representation for encodes to the empty string, which is
+ * dropped rather than enqueued, so a neutral event with no vendor equivalent costs nothing on the
+ * wire instead of emitting a blank frame.
+ */
+export function makeEncodeStream(handle: StreamEncodeHandle): TransformStream<IrStreamEvent, string> {
   return new TransformStream({
     transform(event, controller) {
       const wire = handle.encode(JSON.stringify(event));
@@ -28,14 +53,31 @@ export function makeEncodeStream(handle: { encode(irEventJson: string): string }
 
 /** Maps a loaded translator module to its six generated (de)serialize/stream-handle functions. */
 export interface VendorTranslatorApi<Mod> {
+  /** The module's vendor-request-to-IR function. */
   decodeRequest(mod: Mod): (wireJson: string) => string;
+  /** The module's IR-to-vendor-request function. */
   encodeRequest(mod: Mod): (irRequestJson: string) => string;
+  /** The module's vendor-response-to-IR function. */
   decodeResponse(mod: Mod): (wireJson: string) => string;
+  /** The module's IR-to-vendor-response function. */
   encodeResponse(mod: Mod): (irResponseJson: string) => string;
-  newStreamDecoder(mod: Mod): () => { decode(chunk: string): string };
-  newStreamEncoder(mod: Mod): () => { encode(irEventJson: string): string };
+  /** The module's factory for a one-stream decoder. */
+  newStreamDecoder(mod: Mod): () => StreamDecodeHandle;
+  /** The module's factory for a one-stream encoder. */
+  newStreamEncoder(mod: Mod): () => StreamEncodeHandle;
 }
 
+/**
+ * Assembles a whole {@link VendorTranslator} from a module loader and that module's six entry points.
+ *
+ * @param load resolves the transpiled vendor module, memoized by the caller if it is to load once.
+ * @param api names the six functions on that module, since each vendor exports its own names.
+ * @returns the translator, carrying {@link WithVendorHandles} so a Java host can resolve the raw
+ * synchronous entry points once instead of awaiting per call.
+ * @remarks
+ * This is the whole of what a `*-translator` repo needs beyond its own transpiled module, which is
+ * why the glue lives here rather than being written once per vendor.
+ */
 export function makeVendorTranslator<Mod>(load: () => Promise<Mod>, api: VendorTranslatorApi<Mod>): VendorTranslator & WithVendorHandles {
   return {
     async decodeRequest(wireJson: string): Promise<IrRequest> {

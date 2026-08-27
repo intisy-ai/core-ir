@@ -12,5 +12,10 @@ import java.util.List;
  * single event.
  */
 public interface StreamDecoder {
+    /**
+     * @param chunk the next raw chunk of vendor stream text.
+     * @return the canonical events this chunk completed, in order; never {@code null}, empty when
+     * the chunk completed none.
+     */
     List<IrStreamEvent> decode(String chunk);
 }

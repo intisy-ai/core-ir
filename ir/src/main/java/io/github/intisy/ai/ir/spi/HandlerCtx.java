@@ -34,15 +34,29 @@ public class HandlerCtx {
      */
     public String handlerId;
 
+    /** Creates a context with no fields set yet. */
     public HandlerCtx() {
     }
 
+    /**
+     * Creates a context for a store-less host.
+     *
+     * @param configDir the app home this handler reads its own configuration and state from.
+     * @param log where this handler's diagnostics go.
+     * @param model the model the request names.
+     */
     public HandlerCtx(String configDir, Logger log, String model) {
         this.configDir = configDir;
         this.log = log;
         this.model = model;
     }
 
+    /**
+     * @param configDir the app home this handler reads its own configuration and state from.
+     * @param store the host's injected store.
+     * @param log where this handler's diagnostics go.
+     * @param model the model the request names.
+     */
     public HandlerCtx(String configDir, Store store, Logger log, String model) {
         this.configDir = configDir;
         this.store = store;

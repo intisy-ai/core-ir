@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { makeDecodeStream, makeEncodeStream, makeVendorTranslator } from "../vendor-bridge.js";
-import type { IrRequest, IrResponse, IrStreamEvent } from "../types.js";
+import type { IrRequest, IrResponse, IrStreamEvent } from "../generated/ir.js";
 
 // Reads concurrently with the writes below (a TransformStream's default backpressure stalls a
 // second write once the internal queue is full, so the reader must already be pulling).

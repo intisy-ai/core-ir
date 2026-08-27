@@ -1,4 +1,4 @@
-import type { HandlerCtx, IrHandler } from "../../src/generated/ir-spi.js";
+import type { HandlerCtx, IrHandler } from "../../src/generated/ir.js";
 
 const handler: IrHandler = {
   id: "demo",

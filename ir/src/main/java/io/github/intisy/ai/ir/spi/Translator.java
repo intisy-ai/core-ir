@@ -11,17 +11,37 @@ import io.github.intisy.ai.ir.IrResponse;
  * equivalents) reproduce a semantically-equal payload for the same vendor.
  */
 public interface Translator {
+    /**
+     * @param wireJson the vendor's request wire text.
+     * @return the decoded request.
+     */
     IrRequest decodeRequest(String wireJson);
 
+    /**
+     * @param request the request to encode.
+     * @return the vendor's request wire text.
+     */
     String encodeRequest(IrRequest request);
 
+    /**
+     * @param wireJson the vendor's response wire text.
+     * @return the decoded response.
+     */
     IrResponse decodeResponse(String wireJson);
 
+    /**
+     * @param response the response to encode.
+     * @return the vendor's response wire text.
+     */
     String encodeResponse(IrResponse response);
 
-    /** A fresh, stateful decoder for one streamed connection. */
+    /**
+     * @return a fresh, stateful decoder for one streamed connection.
+     */
     StreamDecoder newStreamDecoder();
 
-    /** A fresh, stateful encoder for one streamed connection. */
+    /**
+     * @return a fresh, stateful encoder for one streamed connection.
+     */
     StreamEncoder newStreamEncoder();
 }

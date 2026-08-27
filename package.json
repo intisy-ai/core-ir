@@ -1,6 +1,6 @@
 {
   "name": "core-ir",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "Vendor-neutral canonical-IR message library for the intisy-ai AI-proxy ecosystem.",
   "type": "module",
   "main": "dist/index.js",
@@ -28,17 +28,20 @@
   },
   "scripts": {
     "build:teavm": "node node_modules/@intisy-ai/api/scripts/teavm-build.mjs --java-dir . --module :teavm --out src/generated/core-ir.teavm.js",
-    "build": "npm run build:teavm && tsc && node build.mjs",
-    "test": "vitest run",
+    "build": "npm run emit && npm run emit:teavm && npm run build:teavm && tsc && node build.mjs",
+    "test": "npm run build && vitest run",
     "prepublishOnly": "npm run build",
-    "emit": "node node_modules/@intisy-ai/api/scripts/emit-dts.mjs --java-dir . --module :ir --module-dir ir --out src/generated"
+    "emit": "node node_modules/@intisy-ai/api/scripts/emit-dts.mjs --java-dir . --module :ir --module-dir ir --out src/generated",
+    "emit:teavm": "node node_modules/@intisy-ai/api/scripts/emit-dts.mjs --java-dir . --module :teavm --out src/generated",
+    "docs": "typedoc"
   },
   "dependencies": {
-    "@intisy-ai/api": "^1.0.2"
+    "@intisy-ai/api": "^1.5.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "esbuild": "^0.21.5",
+    "typedoc": "^0.28.20",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0"
   }

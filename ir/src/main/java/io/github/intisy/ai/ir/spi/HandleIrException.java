@@ -11,8 +11,11 @@ import java.util.Map;
  * envelope, which is why the envelope travels on the exception rather than in the response type.
  */
 public class HandleIrException extends Exception {
+    /** The upstream HTTP status code. */
     public final int status;
+    /** The upstream response headers. */
     public final Map<String, String> headers;
+    /** The upstream response body, verbatim. */
     public final String body;
     /**
      * A reset hint in milliseconds for a caller that wants to surface one, or {@code null} when the
@@ -20,6 +23,12 @@ public class HandleIrException extends Exception {
      */
     public final Long retryAfterMs;
 
+    /**
+     * @param status the upstream HTTP status code.
+     * @param headers the upstream response headers.
+     * @param body the upstream response body, verbatim.
+     * @param retryAfterMs a reset hint in milliseconds, or null when the upstream gave none.
+     */
     public HandleIrException(int status, Map<String, String> headers, String body, Long retryAfterMs) {
         super("handleIr transport error: " + status);
         this.status = status;
@@ -28,6 +37,13 @@ public class HandleIrException extends Exception {
         this.retryAfterMs = retryAfterMs;
     }
 
+    /**
+     * Same as the four-argument constructor with {@code retryAfterMs} left null.
+     *
+     * @param status the upstream HTTP status code.
+     * @param headers the upstream response headers.
+     * @param body the upstream response body, verbatim.
+     */
     public HandleIrException(int status, Map<String, String> headers, String body) {
         this(status, headers, body, null);
     }

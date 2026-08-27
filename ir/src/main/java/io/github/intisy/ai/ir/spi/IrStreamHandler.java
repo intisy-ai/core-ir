@@ -18,6 +18,8 @@ public interface IrStreamHandler extends IrHandler {
     /**
      * Serves an already-decoded streaming request.
      *
+     * @param request the request to serve.
+     * @param ctx the per-call context this handler was invoked with.
      * @return the events as they are produced; never {@code null}.
      * @throws HandleIrException for a non-2xx upstream outcome, so the caller can rebuild the
      * response it describes. Thrown before the first event, a failure is still retryable by the

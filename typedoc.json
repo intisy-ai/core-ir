@@ -1,0 +1,31 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/index.ts"
+  ],
+  "out": "site",
+  "readme": "README.md",
+  "name": "@intisy-ai/core-ir",
+  "excludePrivate": true,
+  "intentionallyNotExported": [
+    "__module"
+  ],
+  "treatWarningsAsErrors": true,
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "notDocumented": true
+  },
+  "sourceLinkTemplate": "https://github.com/intisy-ai/core-ir/blob/{gitRevision}/{path}#L{line}",
+  "ignoredHighlightLanguages": [
+    "mermaid"
+  ],
+  "highlightLanguages": [
+    "bash",
+    "java",
+    "json",
+    "ts",
+    "typescript"
+  ],
+  "tsconfig": "./tsconfig.json"
+}

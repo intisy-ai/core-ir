@@ -34,8 +34,21 @@ public final class JsTranslatorBridge implements Translator {
 
     /** A JS stateful stream handle: {@code { encode(irEventJson) }} or {@code { decode(chunk) }}. */
     public interface JsStreamHandle extends JSObject {
+        /**
+         * Called from Java with one canonical event's IR JSON text; JS implements it.
+         *
+         * @param irEventJson the event, as IR JSON text.
+         * @return the vendor's wire text for the event, or undefined when the vendor has no frame
+         * for it.
+         */
         JSString encode(JSString irEventJson);
 
+        /**
+         * Called from Java with the next raw chunk of vendor stream text; JS implements it.
+         *
+         * @param chunk the next raw chunk of vendor stream text.
+         * @return the events this chunk completed, as JSON array text of IR event JSON.
+         */
         JSString decode(JSString chunk);
     }
 
@@ -47,22 +60,60 @@ public final class JsTranslatorBridge implements Translator {
      * because a stream handle is stateful per connection.
      */
     public interface JsTranslator extends JSObject {
+        /**
+         * Called from Java with the vendor's request wire text; JS implements it.
+         *
+         * @param wireJson the vendor's request wire text.
+         * @return the decoded request, as IR JSON text.
+         */
         JSString decodeRequest(JSString wireJson);
 
+        /**
+         * Called from Java with the request's IR JSON text; JS implements it.
+         *
+         * @param irRequestJson the request, as IR JSON text.
+         * @return the vendor's request wire text.
+         */
         JSString encodeRequest(JSString irRequestJson);
 
+        /**
+         * Called from Java with the vendor's response wire text; JS implements it.
+         *
+         * @param wireJson the vendor's response wire text.
+         * @return the decoded response, as IR JSON text.
+         */
         JSString decodeResponse(JSString wireJson);
 
+        /**
+         * Called from Java with the response's IR JSON text; JS implements it.
+         *
+         * @param irResponseJson the response, as IR JSON text.
+         * @return the vendor's response wire text.
+         */
         JSString encodeResponse(JSString irResponseJson);
 
+        /**
+         * Called from Java to start a new streamed connection; JS implements it.
+         *
+         * @return a fresh, stateful decode handle for one streamed connection.
+         */
         JsStreamHandle newStreamDecoder();
 
+        /**
+         * Called from Java to start a new streamed connection; JS implements it.
+         *
+         * @return a fresh, stateful encode handle for one streamed connection.
+         */
         JsStreamHandle newStreamEncoder();
     }
 
     private final JsTranslator jsTranslator;
     private final JsonCodec json;
 
+    /**
+     * @param jsTranslator the JS-provided translator handle this bridge delegates to.
+     * @param json the codec used to (de)serialize IR types crossing the JS boundary.
+     */
     public JsTranslatorBridge(JsTranslator jsTranslator, JsonCodec json) {
         this.jsTranslator = jsTranslator;
         this.json = json;
