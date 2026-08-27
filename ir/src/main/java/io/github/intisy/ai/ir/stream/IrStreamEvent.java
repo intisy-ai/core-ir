@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * <p>{@code event} is the JSON discriminator ({@link IrEventType}). {@code extensions} carries
  * vendor-specific passthrough with no neutral home, the same role as
- * {@link io.github.intisy.ai.ir.Block#extensions}, so a translator's streaming decode-then-encode round
+ * a content block's own {@code extensions}, so a translator's streaming decode-then-encode round
  * trip stays semantically lossless.
  */
 @TsUnionType

@@ -7,6 +7,14 @@
 // `npm run build:teavm` ahead of tsc.
 let modulePromise: Promise<typeof import("./generated/core-ir.teavm.js")> | null = null;
 
+/**
+ * Loads the transpiled core-ir module, once per process.
+ *
+ * @returns the TeaVM ESM holding the JSON codecs the IR types are read and written by.
+ * @remarks
+ * Memoized rather than re-imported because the module carries its own copy of the Java class
+ * library, so a second instance would be both a wasted parse and a second piece of state.
+ */
 export function loadCoreIr(): Promise<typeof import("./generated/core-ir.teavm.js")> {
   if (!modulePromise) {
     modulePromise = import("./generated/core-ir.teavm.js");

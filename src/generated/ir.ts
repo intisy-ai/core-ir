@@ -9,7 +9,7 @@ import type { Logger, Store } from "@intisy-ai/api/contract";
  * vendor introduces). Rather than fail the whole decode, a translator stashes the ENTIRE raw block
  * verbatim in `raw` so `decode(wire)->IR->encode(wire)` stays lossless for content this
  * codec has no typed model for yet, the same "extensions bag" philosophy as
- * {@link Block.extensions}, just for a whole block instead of one unknown field.
+ * a block's own `extensions`, just for a whole block instead of one unknown field.
  */
 export interface UnknownBlock {
   /** Vendor-specific cache-control hint carried verbatim, or null when the vendor sets none. */
@@ -89,7 +89,7 @@ export interface IrHandler {
  *
  * `event` is the JSON discriminator (`IrEventType`). `extensions` carries
  * vendor-specific passthrough with no neutral home, the same role as
- * `extensions`, so a translator's streaming decode-then-encode round
+ * a content block's own `extensions`, so a translator's streaming decode-then-encode round
  * trip stays semantically lossless.
  */
 export type IrStreamEvent = ContentBlockStartEvent | ContentBlockStopEvent | ErrorEvent | MessageDeltaEvent | MessageStartEvent | MessageStopEvent | TextDeltaEvent | ThinkingDeltaEvent | ThinkingSignatureEvent | ToolInputDeltaEvent;
@@ -129,7 +129,7 @@ export interface ThinkingBlock {
 /**
  * Opens a content block at `index`. `blockKind` is one of {@link ContentBlockKind};
  * `toolUseId`/`toolName` are set only when `blockKind` is
- * {@link ContentBlockKind.TOOL_USE}.
+ * `tool_use`.
  */
 export interface ContentBlockStartEvent {
   /** One of the {@link ContentBlockKind} constants. */
@@ -140,9 +140,9 @@ export interface ContentBlockStartEvent {
   extensions?: Record<string, unknown> | null;
   /** Position of the content block within the message. */
   index: number;
-  /** The tool's name, set only when `blockKind` is {@link ContentBlockKind.TOOL_USE}. */
+  /** The tool's name, set only when `blockKind` is `tool_use`. */
   toolName?: string | null;
-  /** The tool call's id, set only when `blockKind` is {@link ContentBlockKind.TOOL_USE}. */
+  /** The tool call's id, set only when `blockKind` is `tool_use`. */
   toolUseId?: string | null;
 }
 

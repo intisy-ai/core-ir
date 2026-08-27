@@ -9,7 +9,7 @@ import io.github.intisy.ai.tsemit.TsVocabulary;
 /**
  * Opens a content block at {@code index}. {@code blockKind} is one of {@link ContentBlockKind};
  * {@code toolUseId}/{@code toolName} are set only when {@code blockKind} is
- * {@link ContentBlockKind#TOOL_USE}.
+ * {@code tool_use}.
  */
 @TsDiscriminant(field = "event", value = IrEventType.CONTENT_BLOCK_START)
 @TsInterface(data = true)
@@ -19,11 +19,11 @@ public final class ContentBlockStartEvent extends IrStreamEvent {
     /** One of the {@link ContentBlockKind} constants. */
     @TsVocabulary(ContentBlockKind.class)
     public String blockKind;
-    /** The tool call's id, set only when {@link #blockKind} is {@link ContentBlockKind#TOOL_USE}. */
+    /** The tool call's id, set only when {@link #blockKind} is {@code tool_use}. */
     @TsOptional
     @TsNullable
     public String toolUseId;
-    /** The tool's name, set only when {@link #blockKind} is {@link ContentBlockKind#TOOL_USE}. */
+    /** The tool's name, set only when {@link #blockKind} is {@code tool_use}. */
     @TsOptional
     @TsNullable
     public String toolName;
