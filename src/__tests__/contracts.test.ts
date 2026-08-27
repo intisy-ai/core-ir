@@ -9,11 +9,11 @@ const repo = fileURLToPath(new URL("../..", import.meta.url));
 
 function contractFiles(dir: string): string[] {
   // src/generated also holds the TeaVM bundle, which this emission does not produce.
-  return readdirSync(dir).filter((name) => name.startsWith("ir-")).sort();
+  return readdirSync(dir).filter((name) => !name.includes(".teavm.")).sort();
 }
 
 it("keeps the committed declarations identical to what the java emits", () => {
-  const scratch = mkdtempSync(join(tmpdir(), "ir-spi-"));
+  const scratch = mkdtempSync(join(tmpdir(), "core-ir-contracts-"));
   execFileSync(process.execPath, [
     join(repo, "node_modules", "@intisy-ai", "api", "scripts", "emit-dts.mjs"),
     "--java-dir", repo,

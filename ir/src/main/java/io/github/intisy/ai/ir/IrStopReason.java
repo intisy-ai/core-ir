@@ -1,6 +1,16 @@
 package io.github.intisy.ai.ir;
 
-/** {@link IrResponse#stopReason} / streaming {@code MessageDelta.stopReason} constants. */
+import io.github.intisy.ai.tsemit.TsOpen;
+import io.github.intisy.ai.tsemit.TsStringUnion;
+
+/**
+ * {@link IrResponse#stopReason} / streaming {@code MessageDelta.stopReason} constants.
+ *
+ * @implNote Open, because a vendor may report a reason this set has no reading of yet and a
+ * translator carries it through rather than losing it.
+ */
+@TsOpen
+@TsStringUnion
 public final class IrStopReason {
     /** Generation ended normally. */
     public static final String END_TURN = "end_turn";

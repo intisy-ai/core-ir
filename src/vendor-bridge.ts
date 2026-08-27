@@ -3,7 +3,7 @@
 // from a module loader plus the six generated (de)serialize functions. Contains no vendor-specific
 // naming; each *-translator repo supplies that at its own call site.
 
-import type { IrRequest, IrResponse, IrStreamEvent } from "./types.js";
+import type { IrRequest, IrResponse, IrStreamEvent } from "./generated/ir.js";
 import type { VendorHandles, VendorTranslator, WithVendorHandles } from "./translators.js";
 
 export function makeDecodeStream(handle: { decode(chunk: string): string }): TransformStream<Uint8Array | string, IrStreamEvent> {

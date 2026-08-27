@@ -21,8 +21,8 @@ dependencies {
 
 tasks.named("compileJava") {
     options.compilerArgs += [
-        "-Atsemit.name=ir-spi",
+        "-Atsemit.name=ir",
         "-Atsemit.ext=.ts",
-        "-Atsemit.imports=../types.js=IrRequest,IrResponse,IrEventStream;@intisy-ai/api/contract=Logger,Store",
+        "-Atsemit.imports=../event-stream.js=IrEventStream;@intisy-ai/api/contract=Logger,Store",
     ]
 }

@@ -1,12 +1,23 @@
 package io.github.intisy.ai.ir;
 
+import io.github.intisy.ai.tsemit.TsDiscriminant;
+import io.github.intisy.ai.tsemit.TsInterface;
+import io.github.intisy.ai.tsemit.TsNullable;
+import io.github.intisy.ai.tsemit.TsOptional;
+
 /** Image content block: either inline base64 {@code data} or a {@code url}, not both. */
+@TsDiscriminant(field = "kind", value = BlockKind.IMAGE)
+@TsInterface(data = true)
 public final class ImageBlock extends Block {
     /** The image's MIME type, e.g. {@code image/png}. */
     public String mediaType;
     /** Base64-encoded image bytes, or null when {@link #url} is set instead. */
+    @TsOptional
+    @TsNullable
     public String data;
     /** A URL the image can be fetched from, or null when {@link #data} is set instead. */
+    @TsOptional
+    @TsNullable
     public String url;
 
     /** Creates an image block with no media set yet; the caller fills {@link #mediaType} and either {@link #data} or {@link #url}. */

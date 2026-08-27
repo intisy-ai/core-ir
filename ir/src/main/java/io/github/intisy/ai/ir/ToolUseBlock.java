@@ -1,6 +1,11 @@
 package io.github.intisy.ai.ir;
 
+import io.github.intisy.ai.tsemit.TsDiscriminant;
+import io.github.intisy.ai.tsemit.TsInterface;
+
 /** A model-issued tool call. {@code input} is a parsed JSON tree (Map/List/String/Number/Boolean/null). */
+@TsDiscriminant(field = "kind", value = BlockKind.TOOL_USE)
+@TsInterface(data = true)
 public final class ToolUseBlock extends Block {
     /** An identifier for this call, referenced by the matching {@link ToolResultBlock#toolUseId}. */
     public String id;

@@ -1,5 +1,8 @@
 package io.github.intisy.ai.ir;
 
+import io.github.intisy.ai.tsemit.TsNullable;
+import io.github.intisy.ai.tsemit.TsOptional;
+import io.github.intisy.ai.tsemit.TsUnionType;
 import java.util.Map;
 
 /**
@@ -13,12 +16,17 @@ import java.util.Map;
  * {@code cache_control} field), so a translator's {@code decode(wire)->IR->encode(wire)} round trip
  * stays semantically lossless.
  */
+@TsUnionType
 public abstract class Block {
     /** The JSON discriminator identifying the concrete subclass; one of the {@link BlockKind} constants. */
     public String kind;
     /** Vendor-specific cache-control hint carried verbatim, or null when the vendor sets none. */
+    @TsOptional
+    @TsNullable
     public String cacheControl;
     /** Vendor-specific fields with no neutral equivalent, or null when none apply. */
+    @TsOptional
+    @TsNullable
     public Map<String, Object> extensions;
 
     /**

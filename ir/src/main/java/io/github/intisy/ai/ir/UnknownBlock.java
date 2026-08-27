@@ -1,5 +1,7 @@
 package io.github.intisy.ai.ir;
 
+import io.github.intisy.ai.tsemit.TsDiscriminant;
+import io.github.intisy.ai.tsemit.TsInterface;
 import java.util.Map;
 
 /**
@@ -7,9 +9,11 @@ import java.util.Map;
  * vendor content type added after this codec was written, such as a {@code document} block some
  * vendor introduces). Rather than fail the whole decode, a translator stashes the ENTIRE raw block
  * verbatim in {@link #raw} so {@code decode(wire)->IR->encode(wire)} stays lossless for content this
- * codec has no typed model for yet -- the same "extensions bag" philosophy as {@link
- * Block#extensions}, just for a whole block instead of one unknown field.
+ * codec has no typed model for yet, the same "extensions bag" philosophy as
+ * {@link Block#extensions}, just for a whole block instead of one unknown field.
  */
+@TsDiscriminant(field = "kind", value = BlockKind.UNKNOWN)
+@TsInterface(data = true)
 public final class UnknownBlock extends Block {
     /** The entire original wire block, preserved verbatim so a translator can re-emit it unchanged. */
     public Map<String, Object> raw;

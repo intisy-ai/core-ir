@@ -1,6 +1,9 @@
 package io.github.intisy.ai.ir;
 
+import io.github.intisy.ai.tsemit.TsStringUnion;
+
 /** JSON discriminator values for {@link Block} subclasses. */
+@TsStringUnion
 public final class BlockKind {
     /** {@link TextBlock}'s discriminator. */
     public static final String TEXT = "text";

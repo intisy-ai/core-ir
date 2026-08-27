@@ -26,8 +26,15 @@ function expectMatchesCommitted(scratch: string, names: string[]): void {
   }
 }
 
-it("keeps the committed spi declarations identical to what the java emits", () => {
-  expectMatchesCommitted(emit(":ir", ["--module-dir", "ir"]), ["ir-spi.ts"]);
+it("keeps the committed ir declarations identical to what the java emits", () => {
+  expectMatchesCommitted(emit(":ir", ["--module-dir", "ir"]), ["ir.ts"]);
+});
+
+it("leaves no link tag unresolved in the emitted prose", () => {
+  // The emitter matches "{@link " with a literal space, so a javadoc link broken across two source
+  // lines leaks through verbatim and typedoc, which treats an invalid link as an error, then fails.
+  const emitted = readFileSync(join(repo, "src", "generated", "ir.ts"), "utf8");
+  expect(emitted.match(/\{@link\s*$/gm)).toBeNull();
 });
 
 it("keeps the committed teavm declarations identical to what the java emits", () => {

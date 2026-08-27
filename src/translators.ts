@@ -2,7 +2,7 @@
 // types. core-ir itself ships no vendor translators; each *-translator repo depends on core-ir as a
 // published package and implements these interfaces over its own TeaVM export surface.
 
-import type { IrRequest, IrResponse, IrStreamEvent } from "./types.js";
+import type { IrRequest, IrResponse, IrStreamEvent } from "./generated/ir.js";
 
 /** One IR stream-event decoder/encoder pair over a real Web Streams TransformStream. */
 export interface StreamTranslator {
